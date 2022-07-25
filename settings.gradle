@@ -1,0 +1,5 @@
+rootProject.name = 'switchboard'
+include ':core'
+include ':hardware'
+include 'stats'
+
