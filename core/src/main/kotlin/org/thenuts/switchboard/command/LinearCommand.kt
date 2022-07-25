@@ -20,8 +20,10 @@ class LinearCommand(val list: List<Command>) : CommandAbstract(), CommandManager
     override fun update(frame: Frame) {
         do {
             list[i].update(frame)
-            if (list[i].done)
-                list[i].cleanup()
+
+            if (!list[i].done) return
+
+            list[i].cleanup()
             i++
 
             if (i >= list.size) {
