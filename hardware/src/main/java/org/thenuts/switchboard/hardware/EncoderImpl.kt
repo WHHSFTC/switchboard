@@ -2,13 +2,14 @@ package org.thenuts.switchboard.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import org.thenuts.switchboard.geometry.EPSILON
-import org.thenuts.switchboard.geometry.epsilonEquals
 import org.thenuts.switchboard.core.Logger
-import org.thenuts.switchboard.units.Time
+import org.thenuts.switchboard.util.EPSILON
+import org.thenuts.switchboard.util.epsilonEquals
+import org.thenuts.switchboard.util.sinceJvmTime
+import kotlin.time.Duration
 
 class EncoderImpl(val m: DcMotorEx, val name: String, val log: Logger): Encoder {
-    var lastTime = Time.zero
+    var lastTime = Duration.ZERO
     var lastPosition = 0
 
     var rawVelocity: Double = 0.0
@@ -31,18 +32,20 @@ class EncoderImpl(val m: DcMotorEx, val name: String, val log: Logger): Encoder 
         rawPosition = m.currentPosition
         rawVelocity = m.velocity
 
-        val t = Time.now()
-        val step = (t - lastTime).seconds.let { if (it epsilonEquals 0.0) EPSILON else it }
-
-        val derivative = (rawPosition - lastPosition)/step
+        val t = Duration.sinceJvmTime()
+        val step = (t - lastTime).inSeconds
 
         var v = rawVelocity
 
-        while (derivative - v > (1 shl 16) / 2.0)
-            v += 1 shl 16
+        if (lastTime != Duration.ZERO && !(step epsilonEquals 0.0)) {
+            val derivative = (rawPosition - lastPosition)/step
+            while (derivative - v > (1 shl 16) / 2.0)
+                v += 1 shl 16
 
-        while (derivative - v < (1 shl 16) / -2.0)
-            v -= 1 shl 16
+            while (derivative - v < (1 shl 16) / -2.0)
+                v -= 1 shl 16
+        }
+
 
         velocity = v
 

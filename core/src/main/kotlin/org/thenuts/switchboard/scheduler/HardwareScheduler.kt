@@ -1,14 +1,16 @@
 package org.thenuts.switchboard.scheduler
 
-import org.thenuts.switchboard.units.Time
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.ZERO
+import kotlin.time.Duration.Companion.milliseconds
 
 interface HardwareScheduler {
     fun output(all: Boolean = false)
 
-    fun getWorstMean(): Time = Time.milli(3)
+    fun getWorstMean(): Duration = 3.milliseconds
 
     object idle : HardwareScheduler {
-        override fun getWorstMean(): Time = Time.zero
+        override fun getWorstMean(): Duration = ZERO
         override fun output(all: Boolean) { }
     }
 }

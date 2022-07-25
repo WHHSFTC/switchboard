@@ -1,9 +1,11 @@
 package org.thenuts.switchboard.scheduler
 
-import org.thenuts.switchboard.units.Time
+import org.thenuts.switchboard.util.sinceJvmTime
+import kotlin.time.Duration
 import kotlin.math.max
+import kotlin.time.Duration.Companion.nanoseconds
 
-class BucketScheduler(val duration: Time, val table: List<List<HardwareScheduler>>) : HardwareScheduler {
+class BucketScheduler(val duration: Duration, val table: List<List<HardwareScheduler>>) : HardwareScheduler {
     /*
     A = 0 1 2 3 4 5 6 7 8 9 a b c d e f
 
@@ -22,19 +24,19 @@ class BucketScheduler(val duration: Time, val table: List<List<HardwareScheduler
     ] -> becomes loop { ABD ACE ABF ACG }
      */
 
-    override fun getWorstMean(): Time = Time.nano(max(duration.nanoseconds, table.foldIndexed(Time.zero) { index, acc, list ->
-        acc + list.fold(Time.zero) { acc2, sched -> acc2 + (sched.getWorstMean() shr index) }
-    }.nanoseconds))
+    override fun getWorstMean(): Duration = max(duration.inWholeNanoseconds, table.foldIndexed(Duration.ZERO) { index, acc, list ->
+        acc + list.fold(Duration.ZERO) { acc2, sched -> acc2 + (sched.getWorstMean().inWholeNanoseconds shr index).nanoseconds }
+    }.inWholeNanoseconds).nanoseconds
 
     private var n: Long = 0
     override fun output(all: Boolean) {
         if (all) return table.forEach { it.forEach { it.output(all = true) } }
-        val start = Time.now()
+        val start = Duration.sinceJvmTime()
         val end = start + duration
         table.forEachIndexed { i, l ->
             val period = 1L shl i
             l.forEachIndexed { j, hw ->
-                if (Time.now() > end) {
+                if (Duration.sinceJvmTime() > end) {
                     n++
                     return@output
                 }
