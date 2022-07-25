@@ -1,8 +1,9 @@
 package org.thenuts.switchboard.dsl
 
+import org.thenuts.switchboard.command.*
 import org.thenuts.switchboard.core.Frame
 import org.thenuts.switchboard.scheduler.surelyList
-import org.thenuts.switchboard.units.Time
+import kotlin.time.Duration
 
 class CommandListContext {
     private val list: MutableList<Command> = mutableListOf()
@@ -19,45 +20,24 @@ class CommandListContext {
         list += ConcurrentCommand(predicate.surelyList().map {AwaitCommand(it)}, awaitAll = true)
     }
 
-    fun awaitAny(vararg predicate: (Frame) -> Boolean) {
+    fun race(vararg predicate: (Frame) -> Boolean) {
         list += ConcurrentCommand(predicate.surelyList().map {AwaitCommand(it)}, awaitAll = false)
     }
 
-    fun awaitUntil(millis: Long, predicate: (Frame) -> Boolean) {
-        this.awaitUntil(Time.milli(millis), predicate)
-    }
-
-    fun awaitUntil(timeout: Time, predicate: (Frame) -> Boolean) {
+    fun awaitUntil(timeout: Duration, predicate: (Frame) -> Boolean) {
         this.concurrent(awaitAll = false) {
             await(predicate)
             delay(timeout)
         }
     }
 
-    fun delay(duration: Time) {
+    fun delay(duration: Duration) {
         list += DelayCommand(duration)
-    }
-
-    fun delay(millis: Long) {
-        this.delay(Time.milli(millis))
     }
 
     fun times(n: Int, b: CommandListContext.() -> Unit) {
         linear { repeat(n) { linear(b) } }
     }
-
-    // TODO refactor command interface to reuse commands without real time generation
-    fun until(pred: (Frame) -> Boolean, b: CommandListContext.() -> Unit) {
-        concurrent(awaitAll = false) {
-            forever(b)
-            await(pred)
-        }
-    }
-
-    fun forever(b: CommandListContext.() -> Unit) {
-        times(20, b)
-    }
-
 
     fun task(f: (Frame) -> Unit) {
         list += SimpleCommand(f)
@@ -77,6 +57,18 @@ class CommandListContext {
         list += mkConcurrent(awaitAll, b)
     }
 
+    fun loop(pred: (Frame) -> Boolean, interrupt: Boolean = false, b: CommandListContext.() -> Unit) {
+        list += mkLoop(pred, interrupt, b)
+    }
+
+    fun until(pred: (Frame) -> Boolean, interrupt: Boolean = false, b: CommandListContext.() -> Unit) {
+        loop({ !pred(it) }, interrupt, b)
+    }
+
+    fun forever(b: CommandListContext.() -> Unit) {
+        loop({ true }, interrupt = false, b)
+    }
+
     fun build() = list
 }
 
@@ -85,3 +77,7 @@ fun mkLinear(b: CommandListContext.() -> Unit)
 
 fun mkConcurrent(awaitAll: Boolean = true, b: CommandListContext.() -> Unit)
         = ConcurrentCommand(CommandListContext().apply(b).build(), awaitAll)
+
+fun mkLoop(pred: (Frame) -> Boolean, interrupt: Boolean = false, b: CommandListContext.() -> Unit)
+        = LoopCommand(pred, interrupt) { mkLinear(b) }
+

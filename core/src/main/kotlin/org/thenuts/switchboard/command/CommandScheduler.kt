@@ -32,7 +32,7 @@ class CommandScheduler : CommandManager {
                 val values = values();
             }
 
-            operator fun plus(that: Owner) = values[this.ordinal and that.ordinal]
+            operator fun plus(that: Owner) = values[this.ordinal or that.ordinal]
 
             operator fun minus(that: Owner) = values[this.ordinal and that.ordinal.inv() and 3]
         }

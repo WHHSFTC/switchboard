@@ -4,8 +4,8 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.thenuts.switchboard.core.Logger
-import org.thenuts.switchboard.hardware.*
 import org.thenuts.switchboard.units.Time
+import kotlin.time.Duration.Companion.seconds
 
 class Configuration(val hwMap: HardwareMap, val logger: Logger) {
     interface DeviceMap<T> {
@@ -83,7 +83,7 @@ class Configuration(val hwMap: HardwareMap, val logger: Logger) {
     }
 
     private fun announceStub(key: String) {
-        logger.addMessage("MISSING HARDWARE DEVICE: $key", Time.seconds(60.0))
+        logger.addMessage("MISSING HARDWARE DEVICE: $key", 60.seconds)
     }
 
 
