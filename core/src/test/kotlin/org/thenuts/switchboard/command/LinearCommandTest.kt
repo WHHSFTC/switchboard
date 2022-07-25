@@ -1,7 +1,6 @@
 package org.thenuts.switchboard.command
 
 import org.junit.jupiter.api.Assertions.assertArrayEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.thenuts.switchboard.core.Frame
