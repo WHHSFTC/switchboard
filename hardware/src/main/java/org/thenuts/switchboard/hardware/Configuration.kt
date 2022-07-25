@@ -4,7 +4,6 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.thenuts.switchboard.core.Logger
-import org.thenuts.switchboard.units.Time
 import kotlin.time.Duration.Companion.seconds
 
 class Configuration(val hwMap: HardwareMap, val logger: Logger) {
@@ -42,8 +41,8 @@ class Configuration(val hwMap: HardwareMap, val logger: Logger) {
                 = getInput(::EncoderImpl, ::EncoderStub, key)
     }
 
-    val analogInputs = object : DeviceMap<AnalogInput> {
-        override operator fun get(key: String): AnalogInput
+    val analogInputs = object : DeviceMap<org.thenuts.switchboard.hardware.AnalogInput> {
+        override operator fun get(key: String): org.thenuts.switchboard.hardware.AnalogInput
                 = getInput(::AnalogInputImpl, ::AnalogInputStub, key)
     }
 
