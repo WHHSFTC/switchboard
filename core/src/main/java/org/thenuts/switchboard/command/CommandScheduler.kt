@@ -113,7 +113,12 @@ class CommandScheduler : CommandManager {
         removeEdges()
         removeNodes()
         addNodes()
+        val needSort = edgeAdditions.isNotEmpty()
         addEdges()
+        if (needSort) {
+            val acyclic = topSort()
+            assert(acyclic) { "Graph has cycles" }
+        }
     }
 
     private fun removeEdges() {
@@ -139,19 +144,12 @@ class CommandScheduler : CommandManager {
                 return@f true
             }
             if (nodes.contains(e.before) && nodes.contains(e.after)) {
+                if (checkCycle(e)) return@f false
+
                 e.before.postreqs += e
                 e.after.prereqs += e
 
-                val acyclic = topSort()
-                if (acyclic) {
-                    edges += e
-                    return@f true
-                }
-
-                // undo edge creation
-                e.before.postreqs.remove(e)
-                e.after.prereqs.remove(e)
-                return@f false
+                return@f true
             }
             return@f false
         }
@@ -200,14 +198,14 @@ class CommandScheduler : CommandManager {
             node.postreqs.forEach {
                 val post = it.after
                 if (post == edge.before) {
-                    return false
+                    return true
                 }
                 if (post !in queue) {
                     queue += post
                 }
             }
         }
-        return true
+        return false
     }
 
     private fun topSort(): Boolean {
