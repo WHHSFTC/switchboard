@@ -10,7 +10,7 @@ import kotlin.time.Duration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LinearCommandTest {
     @Test
-    fun commandExecutionOrderTest() {
+    fun interruptTest() {
         val manager = MockManager()
         val linear = LinearCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
 
@@ -28,7 +28,6 @@ class LinearCommandTest {
             }
         }
 
-        frame = Frame.from(Duration.ZERO, frame)
         linear.cleanup()
 
         assertArrayEquals(linear.list.map { true }.toTypedArray(), linear.list.map { (it as MockCommand).state.isSafe }.toTypedArray())

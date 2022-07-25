@@ -26,19 +26,19 @@ class MockCommand(var n: Int) : CommandAbstract() {
 
     override fun init() {
         super.init()
-        assertEquals(State.SET_MANAGER, state, "init() should be called after setManager()")
+        assertEquals(State.SET_MANAGER, state, "init() should be called after setManager(), not ${state}")
         state = State.INIT
     }
 
     override fun start(frame: Frame) {
         super.start(frame)
-        assertEquals(State.INIT, state, "start() should be called after init()")
+        assertEquals(State.INIT, state, "start() should be called after init(), not ${state}")
         state = State.START
     }
 
     override fun update(frame: Frame) {
         super.update(frame)
-        assertTrue(state == State.START || state == State.UPDATE, "update() should be called after start() or update()")
+        assertTrue(state == State.START || state == State.UPDATE, "update() should be called after start() or update(), not ${state}")
         state = State.UPDATE
 
         n--;
@@ -49,7 +49,7 @@ class MockCommand(var n: Int) : CommandAbstract() {
 
     override fun cleanup() {
         super.cleanup()
-        assertTrue(state == State.START || state == State.UPDATE, "cleanup() should be called after start() or update()")
+        assertTrue(state == State.START || state == State.UPDATE, "cleanup() should be called after start() or update(), not ${state}")
         state = State.CLEANUP
     }
 }
