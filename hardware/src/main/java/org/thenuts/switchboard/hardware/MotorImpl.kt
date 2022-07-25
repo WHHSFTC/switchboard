@@ -3,8 +3,8 @@ package org.thenuts.switchboard.hardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
-import org.thenuts.switchboard.geometry.epsilonEquals
 import org.thenuts.switchboard.core.Logger
+import org.thenuts.switchboard.util.epsilonEquals
 
 class MotorImpl(val m: DcMotorEx, val name: String, val log: Logger): Motor {
     //var conf: Power = Power(0.0)
@@ -55,6 +55,8 @@ class MotorImpl(val m: DcMotorEx, val name: String, val log: Logger): Motor {
                     is Motor.RunMode.VelocityPIDF -> {
                         m.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, it.vpid)
                     }
+
+                    else -> { }
                 }
             }
             log.err["$name mode"] = it

@@ -1,8 +1,8 @@
 package org.thenuts.switchboard.hardware
 
 import com.qualcomm.robotcore.hardware.ServoImplEx
-import org.thenuts.switchboard.geometry.epsilonEquals
 import org.thenuts.switchboard.core.Logger
+import org.thenuts.switchboard.util.epsilonEquals
 
 class ServoImpl(val s: com.qualcomm.robotcore.hardware.Servo, val name: String, val log: Logger): Servo {
     //override var position: Double = 0.0

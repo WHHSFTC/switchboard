@@ -7,6 +7,7 @@ import org.thenuts.switchboard.util.EPSILON
 import org.thenuts.switchboard.util.epsilonEquals
 import org.thenuts.switchboard.util.sinceJvmTime
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 class EncoderImpl(val m: DcMotorEx, val name: String, val log: Logger): Encoder {
     var lastTime = Duration.ZERO
@@ -33,7 +34,7 @@ class EncoderImpl(val m: DcMotorEx, val name: String, val log: Logger): Encoder 
         rawVelocity = m.velocity
 
         val t = Duration.sinceJvmTime()
-        val step = (t - lastTime).inSeconds
+        val step = (t - lastTime).toDouble(DurationUnit.SECONDS)
 
         var v = rawVelocity
 

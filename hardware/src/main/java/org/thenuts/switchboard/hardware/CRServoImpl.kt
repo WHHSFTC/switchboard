@@ -1,7 +1,7 @@
 package org.thenuts.switchboard.hardware
 
-import org.thenuts.switchboard.geometry.epsilonEquals
 import org.thenuts.switchboard.core.Logger
+import org.thenuts.switchboard.util.epsilonEquals
 
 class CRServoImpl(val m: CRServo, val name: String, val log: Logger): CRServo {
     init {
