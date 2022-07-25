@@ -2,15 +2,18 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.core.Frame
 
-class SwitchCommand<T>(val supplier: () -> T, val list: List<Case<T>>) : Command {
+class SwitchCommand<T>(val supplier: () -> T, val list: List<Case<T>>) : CommandAbstract(), CommandManager {
     override var done: Boolean = false
-    private var cmd: Command? = null
+    private lateinit var cmd: Command
 
-    override fun load(frame: Frame) {
+    override fun start(frame: Frame) {
         val v = supplier()
         for (c in list) {
             if (c.pred(v)) {
                 cmd = c.command
+                cmd.setManager(this)
+                cmd.init()
+                cmd.start(frame)
                 return
             }
         }
@@ -18,17 +21,34 @@ class SwitchCommand<T>(val supplier: () -> T, val list: List<Case<T>>) : Command
     }
 
     override fun update(frame: Frame) {
-        if (done) return
-        val c = cmd ?: return load(frame)
-        if (c.done) done = true
-        else c.update(frame)
+        cmd.update(frame)
+        if (cmd.done) {
+            done = true
+            cmd.cleanup()
+        }
     }
 
     override fun cleanup() {
-        if (done) return
-        val c = cmd ?: return
-        if (!c.done) c.cleanup()
+        if (!done) {
+            cmd.cleanup()
+        }
     }
 
     data class Case<T>(val pred: (T) -> Boolean, val command: LinearCommand)
+
+    override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
+        registerPrequisite(prereq)
+    }
+
+    override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
+        registerPostrequisite(postreq)
+    }
+
+    override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
+        deregisterPrequisite(prereq)
+    }
+
+    override fun handleDeregisterPostrequisite(src: Command, postreq: Command) {
+        deregisterPostrequisite(postreq)
+    }
 }

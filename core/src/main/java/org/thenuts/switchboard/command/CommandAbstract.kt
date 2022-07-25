@@ -1,5 +1,7 @@
 package org.thenuts.switchboard.command
 
+import org.thenuts.switchboard.core.Frame
+
 abstract class CommandAbstract : Command {
     private lateinit var manager: CommandManager
     override fun setManager(manager: CommandManager) {
@@ -21,8 +23,4 @@ abstract class CommandAbstract : Command {
     fun deregisterPostrequisite(postreq: Command) {
         this.manager.handleDeregisterPostrequisite(this, postreq)
     }
-
-//    fun finish() {
-//        this.manager.handleFinish(this)
-//    }
 }

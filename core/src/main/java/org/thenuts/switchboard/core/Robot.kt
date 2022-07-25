@@ -26,7 +26,7 @@ abstract class Robot(val logger: Logger, val config: Configuration, val name: St
         if (a in commands)
             return false
         commands.add(a)
-        a.load(frame)
+        a.start(frame)
         return true
     }
 
@@ -34,7 +34,7 @@ abstract class Robot(val logger: Logger, val config: Configuration, val name: St
         if (a in commands)
             return false
         commands.add(0, a)
-        a.load(frame)
+        a.start(frame)
         return true
     }
 
@@ -98,7 +98,7 @@ abstract class Robot(val logger: Logger, val config: Configuration, val name: St
     fun setup() {
         logger.out["expected cycle (ms)"] = scheduler.getWorstMean().milliseconds
         activities.forEach { insertCommand(it) }
-        commands.forEach { it.load(frame) }
+        commands.forEach { it.start(frame) }
         scheduler.output(all = true)
         logger.update()
     }
@@ -126,7 +126,7 @@ abstract class Robot(val logger: Logger, val config: Configuration, val name: St
         logger.err["commands"] = commands.map { it.javaClass.canonicalName }
         logger.err["insertions"] = insertions.map { it.javaClass.canonicalName }
 
-        insertions.forEach { it.load(frame); insertCommand(it) }
+        insertions.forEach { it.start(frame); insertCommand(it) }
         insertions.clear()
         forceDeleteCommands { it.done }
         logger.err["deletions"] = deletions.map { it.javaClass.canonicalName }

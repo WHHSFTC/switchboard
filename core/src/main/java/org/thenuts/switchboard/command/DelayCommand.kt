@@ -1,18 +1,21 @@
 package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.core.Frame
-import org.thenuts.switchboard.units.Time
+import kotlin.time.Duration
 
-class DelayCommand(val duration: Time) : Command {
-    var start = Time.zero
+class DelayCommand(val duration: Duration) : Command {
     override var done: Boolean = false
-    
-    override fun load(frame: Frame) {
-        start = frame.runtime
+
+    var startTime = Duration.ZERO
+
+    override fun setManager(manager: CommandManager) { }
+
+    override fun start(frame: Frame) {
+        startTime = frame.runtime
     }
 
     override fun update(frame: Frame) {
-        if (!done && frame.runtime - start > duration)
+        if (frame.runtime - startTime > duration)
             done = true
     }
 }

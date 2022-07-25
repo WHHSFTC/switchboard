@@ -21,7 +21,7 @@ class LoopCommand(val commandBuilder: (Frame) -> Command, val pred: () -> Boolea
                     this.done = true
                     return
                 } else {
-                    cmd = commandBuilder(frame).also { it.load(frame) }
+                    cmd = commandBuilder(frame).also { it.start(frame) }
                 }
             }
             else -> {

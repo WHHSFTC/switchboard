@@ -106,13 +106,15 @@ class CommandScheduler : CommandManager {
             when (it) {
                 is Node.CommandNode -> {
                     it.cmd.update(frame)
+                    if (it.cmd.done)
+                        removals += it
                 }
                 is Node.ResourceNode -> TODO()
             }
         }
         removeEdges()
         removeNodes()
-        addNodes()
+        addNodes(frame)
         val needSort = edgeAdditions.isNotEmpty()
         addEdges()
         if (needSort) {
@@ -155,12 +157,13 @@ class CommandScheduler : CommandManager {
         }
     }
 
-    private fun addNodes() {
+    private fun addNodes(frame: Frame) {
         nodes.addAll(additions)
         additions.forEach {
             if (it is Node.CommandNode) {
                 it.cmd.setManager(this)
-                it.cmd.load()
+                it.cmd.init()
+                it.cmd.start(frame)
             }
         }
         additions.clear()
