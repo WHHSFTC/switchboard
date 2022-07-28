@@ -3,15 +3,18 @@ package org.thenuts.switchboard.command
 import org.thenuts.switchboard.core.Frame
 
 class CommandScheduler : CommandManager {
-    var nodes = mutableListOf<Node>()
-    var edges = mutableSetOf<Edge>()
+    private var _nodes = mutableListOf<Node>()
+    val nodes: List<Node>
+        get() = _nodes
+
+    private val edges = mutableSetOf<Edge>()
 
 //    var resources = mutableMapOf<Any, Resource>()
 
-    var edgeRemovals = mutableListOf<Edge>()
-    var edgeAdditions = mutableListOf<Edge>()
-    var additions = mutableListOf<Node>()
-    var removals = mutableSetOf<Node>()
+    private val edgeRemovals = mutableListOf<Edge>()
+    private val edgeInsertions = mutableListOf<Edge>()
+    private val insertions = mutableListOf<Node>()
+    private val removals = mutableSetOf<Node>()
 
     sealed class Node(var prereqs: MutableList<Edge> = mutableListOf(), var postreqs: MutableList<Edge> = mutableListOf()) {
         class CommandNode(val cmd: Command) : Node()
@@ -38,12 +41,12 @@ class CommandScheduler : CommandManager {
         }
     }
 
-    fun Resource.node() = nodes.find { it is Node.ResourceNode && it.res == this }
-    fun Command.node() = nodes.find { it is Node.CommandNode && it.cmd == this }
+    fun Resource.node() = _nodes.find { it is Node.ResourceNode && it.res == this }
+    fun Command.node() = _nodes.find { it is Node.CommandNode && it.cmd == this }
 
     fun addCommand(cmd: Command): Boolean {
         if (cmd.node() != null) return false
-        additions += Node.CommandNode(cmd)
+        insertions += Node.CommandNode(cmd)
         return true
     }
 
@@ -54,11 +57,11 @@ class CommandScheduler : CommandManager {
 
     // CommandParent methods
     override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
-        edgeAdditions.add(Edge(Edge.Owner.AFTER, prereq.node() ?: return, src.node() ?: return))
+        edgeInsertions.add(Edge(Edge.Owner.AFTER, prereq.node() ?: return, src.node() ?: return))
     }
 
     override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
-        edgeAdditions.add(Edge(Edge.Owner.BEFORE, src.node() ?: return, postreq.node() ?: return))
+        edgeInsertions.add(Edge(Edge.Owner.BEFORE, src.node() ?: return, postreq.node() ?: return))
     }
 
     override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
@@ -102,7 +105,16 @@ class CommandScheduler : CommandManager {
 */
 
     fun update(frame: Frame) {
-        nodes.forEach {
+        removeEdges()
+        removeNodes()
+        insertNodes(frame)
+        val needSort = edgeInsertions.isNotEmpty()
+        insertEdges()
+        if (needSort) {
+            val acyclic = topSort()
+            assert(acyclic) { "Graph has cycles" }
+        }
+        _nodes.forEach {
             when (it) {
                 is Node.CommandNode -> {
                     it.cmd.update(frame)
@@ -112,15 +124,23 @@ class CommandScheduler : CommandManager {
                 is Node.ResourceNode -> TODO()
             }
         }
-        removeEdges()
-        removeNodes()
-        addNodes(frame)
-        val needSort = edgeAdditions.isNotEmpty()
-        addEdges()
-        if (needSort) {
-            val acyclic = topSort()
-            assert(acyclic) { "Graph has cycles" }
+    }
+
+    fun clear() {
+        _nodes.forEach {
+            when (it) {
+                is Node.CommandNode -> {
+                    it.cmd.cleanup()
+                }
+                is Node.ResourceNode -> TODO()
+            }
         }
+        _nodes.clear()
+        edges.clear()
+        edgeRemovals.clear()
+        edgeInsertions.clear()
+        removals.clear()
+        insertions.clear()
     }
 
     private fun removeEdges() {
@@ -138,18 +158,20 @@ class CommandScheduler : CommandManager {
         edgeRemovals.clear()
     }
 
-    private fun addEdges() {
-        edgeAdditions.removeIf f@{ e ->
+    private fun insertEdges() {
+        edgeInsertions.removeIf f@{ e ->
             val f = edges.find { (o, b, a) -> b == e.before && a == e.after }
             if (f != null) {
                 f.owner += e.owner
                 return@f true
             }
-            if (nodes.contains(e.before) && nodes.contains(e.after)) {
+            if (_nodes.contains(e.before) && _nodes.contains(e.after)) {
                 if (checkCycle(e)) return@f false
 
                 e.before.postreqs += e
                 e.after.prereqs += e
+
+                edges += e
 
                 return@f true
             }
@@ -157,28 +179,28 @@ class CommandScheduler : CommandManager {
         }
     }
 
-    private fun addNodes(frame: Frame) {
-        nodes.addAll(additions)
-        additions.forEach {
+    private fun insertNodes(frame: Frame) {
+        _nodes.addAll(insertions)
+        insertions.forEach {
             if (it is Node.CommandNode) {
                 it.cmd.setManager(this)
                 it.cmd.init()
                 it.cmd.start(frame)
             }
         }
-        additions.clear()
+        insertions.clear()
     }
 
     private fun removeNodes() {
         removals.forEach f@{ removal ->
             val badEdges = removal.prereqs + removal.postreqs
 
-            nodes.forEach { node ->
+            _nodes.forEach { node ->
                 node.prereqs.removeAll(badEdges)
                 node.postreqs.removeAll(badEdges)
             }
 
-            nodes.remove(removal)
+            _nodes.remove(removal)
 
             if (removal is Node.CommandNode) {
                 removal.cmd.cleanup()
@@ -192,7 +214,7 @@ class CommandScheduler : CommandManager {
         removals.clear()
     }
 
-    fun checkCycle(edge: Edge): Boolean {
+    private fun checkCycle(edge: Edge): Boolean {
         // bfs forward through tree starting at after, ending at before to find a cycle
         val queue = mutableListOf(edge.after)
         var i = 0
@@ -207,13 +229,17 @@ class CommandScheduler : CommandManager {
                     queue += post
                 }
             }
+            i++
         }
         return false
     }
 
     private fun topSort(): Boolean {
-        val sorted = nodes.filter { it.prereqs.isEmpty() }.toMutableList()
+        val sorted = _nodes.filter { it.prereqs.isEmpty() }.toMutableList()
         var i = 0;
+
+        _nodes.forEach { it.workingPrereqs.clear(); it.prereqs.mapTo(it.workingPrereqs) { it } }
+
         while (i < sorted.size) {
             val n = sorted[i]
             n.postreqs. forEach { edge ->
@@ -227,10 +253,10 @@ class CommandScheduler : CommandManager {
             i++
         }
 
-        nodes.forEach { it.workingPrereqs = it.prereqs }
+        _nodes.forEach { it.workingPrereqs.clear() }
 
-        return if (sorted.size == nodes.size) {
-            nodes = sorted
+        return if (sorted.size == _nodes.size) {
+            _nodes = sorted
             true
         } else {
             false

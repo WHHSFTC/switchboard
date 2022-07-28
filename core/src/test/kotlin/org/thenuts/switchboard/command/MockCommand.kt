@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.thenuts.switchboard.core.Frame
 
-class MockCommand(var n: Int) : CommandAbstract() {
+class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreqs: List<Command> = listOf()) : CommandAbstract() {
     enum class State(val isSafe: Boolean = false) {
         NOTHING(true),
         SET_MANAGER(true),
@@ -34,6 +34,9 @@ class MockCommand(var n: Int) : CommandAbstract() {
         super.start(frame)
         assertEquals(State.INIT, state, "start() should be called after init(), not ${state}")
         state = State.START
+
+        prereqs.map { registerPrequisite(it) }
+        postreqs.map { registerPostrequisite(it) }
     }
 
     override fun update(frame: Frame) {
@@ -51,5 +54,8 @@ class MockCommand(var n: Int) : CommandAbstract() {
         super.cleanup()
         assertTrue(state == State.START || state == State.UPDATE, "cleanup() should be called after start() or update(), not ${state}")
         state = State.CLEANUP
+
+        prereqs.map { deregisterPrequisite(it) }
+        postreqs.map { deregisterPostrequisite(it) }
     }
 }
