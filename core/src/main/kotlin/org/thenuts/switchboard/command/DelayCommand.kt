@@ -8,8 +8,6 @@ class DelayCommand(val duration: Duration) : Command {
 
     var startTime = Duration.ZERO
 
-    override fun setManager(manager: CommandManager) { }
-
     override fun start(frame: Frame) {
         startTime = frame.runtime
     }
