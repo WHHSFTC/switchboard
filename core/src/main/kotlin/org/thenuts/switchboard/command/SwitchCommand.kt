@@ -17,7 +17,7 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combin
                 return
             }
         }
-        cmd = Command.nop
+        cmd = Command.NOP
     }
 
     override fun update(frame: Frame) {

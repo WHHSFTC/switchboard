@@ -9,7 +9,7 @@ interface HardwareScheduler {
 
     fun getWorstMean(): Duration = 3.milliseconds
 
-    object idle : HardwareScheduler {
+    object IDLE : HardwareScheduler {
         override fun getWorstMean(): Duration = ZERO
         override fun output(all: Boolean) { }
     }

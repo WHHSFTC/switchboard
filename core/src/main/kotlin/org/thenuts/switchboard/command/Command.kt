@@ -11,11 +11,11 @@ interface Command {
     fun setManager(manager: CommandManager) { }
     val done: Boolean
 
-    object nop : Command {
+    object NOP : Command {
         override val done: Boolean = true
     }
 
-    object stall : Command {
+    object STALL : Command {
         override val done: Boolean = false
     }
 }
