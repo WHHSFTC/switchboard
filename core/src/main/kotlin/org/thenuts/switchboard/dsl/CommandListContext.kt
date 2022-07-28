@@ -9,7 +9,7 @@ class CommandListContext {
     private val list: MutableList<Command> = mutableListOf()
 
     fun <T> switch(supplier: () -> T, block: SwitchCommandContext<T>.() -> Unit) {
-        list += makeSwitch(supplier, block)
+        list += mkSwitch(supplier, block)
     }
 
     fun await(predicate: (Frame) -> Boolean) {

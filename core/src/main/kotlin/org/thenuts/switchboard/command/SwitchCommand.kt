@@ -2,13 +2,13 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.core.Frame
 
-class SwitchCommand<T>(val supplier: () -> T, val list: List<Case<T>>) : CommandAbstract(), CommandManager {
+class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : CommandAbstract(), CommandManager {
     override var done: Boolean = false
     private lateinit var cmd: Command
 
     override fun start(frame: Frame) {
         val v = supplier()
-        for (c in list) {
+        for (c in cases) {
             if (c.pred(v)) {
                 cmd = c.command
                 cmd.setManager(this)
@@ -34,7 +34,7 @@ class SwitchCommand<T>(val supplier: () -> T, val list: List<Case<T>>) : Command
         }
     }
 
-    data class Case<T>(val pred: (T) -> Boolean, val command: LinearCommand)
+    data class Case<T>(val pred: (T) -> Boolean, val command: Command)
 
     override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
         registerPrequisite(prereq)
