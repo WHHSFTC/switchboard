@@ -22,22 +22,7 @@ class CommandScheduler : CommandManager {
         var workingPrereqs = mutableListOf<Edge>()
     }
 
-    data class Edge(var owner: Owner, val before: Node, val after: Node) {
-        enum class Owner {
-            DELETE,
-            BEFORE,
-            AFTER,
-            BOTH;
-
-            companion object {
-                val values = values();
-            }
-
-            operator fun plus(that: Owner) = values[this.ordinal or that.ordinal]
-
-            operator fun minus(that: Owner) = values[this.ordinal and that.ordinal.inv() and 3]
-        }
-    }
+    data class Edge(var owners: MutableSet<Command>, val before: Node, val after: Node)
 
     data class Resource(val key: Any, val value: Any, val scope: Command?)
 
@@ -78,30 +63,19 @@ class CommandScheduler : CommandManager {
 //    }
 
 
-    // CommandParent methods
-    override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
-        edgeInsertions.add(Edge(Edge.Owner.AFTER, prereq.node() ?: return, src.node() ?: return))
+    // CommandManager methods
+    override fun handleRegisterEdge(owner: Command, before: Command, after: Command) {
+        edgeInsertions.add(Edge(mutableSetOf(owner), before.node() ?: return, after.node() ?: return))
     }
 
-    override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
-        edgeInsertions.add(Edge(Edge.Owner.BEFORE, src.node() ?: return, postreq.node() ?: return))
+    override fun handleDeregisterEdge(owner: Command, before: Command, after: Command) {
+        edgeRemovals.add(Edge(mutableSetOf(owner), before.node() ?: return, after.node() ?: return))
     }
 
-    override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
-        edgeRemovals.add(Edge(Edge.Owner.AFTER, prereq.node() ?: return, src.node() ?: return))
-    }
-
-    override fun handleDeregisterPostrequisite(src: Command, postreq: Command) {
-        edgeRemovals.add(Edge(Edge.Owner.AFTER, src.node() ?: return, postreq.node() ?: return))
-    }
-
-    override fun handleDeregisterAll(src: Command) {
-        val srcNode = src.node() ?: return
+    override fun handleDeregisterAll(owner: Command) {
         edges.mapNotNullTo(edgeRemovals) { (o, b, a) ->
-            if (srcNode == b && o + Edge.Owner.AFTER == Edge.Owner.BOTH) // has BEFORE
-                Edge(Edge.Owner.BEFORE, b, a)
-            else if (srcNode == a && o + Edge.Owner.BEFORE == Edge.Owner.BOTH) // has AFTER
-                Edge(Edge.Owner.AFTER, b, a)
+            if (owner in o)
+                Edge(mutableSetOf(owner), b, a)
             else
                 null
         }
@@ -147,11 +121,11 @@ class CommandScheduler : CommandManager {
     }
 
     private fun removeEdges() {
-        edgeRemovals.forEach f@{ (owner, before, after) ->
+        edgeRemovals.forEach f@{ (owners, before, after) ->
             val f = edges.find { (o, b, a) -> b == before && a == after }
             if (f != null) {
-                f.owner -= owner
-                if (f.owner == Edge.Owner.DELETE) {
+                f.owners -= owners
+                if (f.owners.isEmpty()) {
                     before.postreqs.removeIf { it.after == after }
                     after.prereqs.removeIf { it.before == before }
                     edges.remove(f)
@@ -165,7 +139,7 @@ class CommandScheduler : CommandManager {
         edgeInsertions.removeIf f@{ e ->
             val f = edges.find { (o, b, a) -> b == e.before && a == e.after }
             if (f != null) {
-                f.owner += e.owner
+                f.owners += e.owners
                 return@f true
             }
             if (_nodes.contains(e.before) && _nodes.contains(e.after)) {
@@ -210,7 +184,7 @@ class CommandScheduler : CommandManager {
             }
 
 //            resources.entries.removeAll { (_, res) ->
-//                res.owner == it
+//                res.owners == it
 //            }
         }
 

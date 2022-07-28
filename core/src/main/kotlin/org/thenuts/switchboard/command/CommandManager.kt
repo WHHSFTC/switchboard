@@ -1,11 +1,9 @@
 package org.thenuts.switchboard.command
 
 interface CommandManager {
-    fun handleRegisterPrerequisite(src: Command, prereq: Command)
-    fun handleRegisterPostrequisite(src: Command, postreq: Command)
+    fun handleRegisterEdge(owner: Command, before: Command, after: Command)
 
-    fun handleDeregisterPrerequisite(src: Command, prereq: Command)
-    fun handleDeregisterPostrequisite(src: Command, postreq: Command)
+    fun handleDeregisterEdge(owner: Command, before: Command, after: Command)
 
     fun handleDeregisterAll(src: Command)
 

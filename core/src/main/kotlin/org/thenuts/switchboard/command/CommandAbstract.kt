@@ -1,30 +1,28 @@
 package org.thenuts.switchboard.command
 
-import org.thenuts.switchboard.core.Frame
-
 abstract class CommandAbstract : Command {
-    private lateinit var manager: CommandManager
+    protected lateinit var commandManager: CommandManager
     override fun setManager(manager: CommandManager) {
-        this.manager = manager
+        commandManager = manager
     }
 
     fun registerPrequisite(prereq: Command) {
-        this.manager.handleRegisterPrerequisite(this, prereq)
+        commandManager.handleRegisterEdge(this, prereq, this)
     }
 
     fun registerPostrequisite(postreq: Command) {
-        this.manager.handleRegisterPostrequisite(this, postreq)
+        commandManager.handleRegisterEdge(this, this, postreq)
     }
     
     fun deregisterPrequisite(prereq: Command) {
-        this.manager.handleDeregisterPrerequisite(this, prereq)
+        commandManager.handleDeregisterEdge(this, prereq, this)
     }
 
     fun deregisterPostrequisite(postreq: Command) {
-        this.manager.handleDeregisterPostrequisite(this, postreq)
+        commandManager.handleDeregisterEdge(this, this, postreq)
     }
 
     fun deregisterAll() {
-        this.manager.handleDeregisterAll(this)
+        commandManager.handleDeregisterAll(this)
     }
 }

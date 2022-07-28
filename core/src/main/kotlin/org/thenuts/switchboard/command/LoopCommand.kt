@@ -3,7 +3,7 @@ package org.thenuts.switchboard.command
 import org.thenuts.switchboard.core.Frame
 
 // TODO refactor command interface to reuse commands without real time generation
-class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, val commandBuilder: () -> Command) : CommandAbstract(), CommandManager {
+class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, val commandBuilder: () -> Command) : Combinator() {
     private var cmd: Command? = null
     override var done: Boolean = false
 
@@ -22,7 +22,10 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
 
     override fun update(frame: Frame) {
         if ((interrupt || cmd == null) && pred(frame)) {
-            cmd?.cleanup()
+            cmd?.let {
+                it.cleanup()
+                commandManager.handleDeregisterAll(it)
+            }
             cmd = null
             done = true
             return
@@ -38,27 +41,15 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
 
         if (c.done) {
             c.cleanup()
+            commandManager.handleDeregisterAll(c)
             cmd = null
         }
     }
 
     override fun cleanup() {
-        cmd?.cleanup()
-    }
-
-    override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
-        registerPrequisite(prereq)
-    }
-
-    override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
-        registerPostrequisite(postreq)
-    }
-
-    override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
-        deregisterPrequisite(prereq)
-    }
-
-    override fun handleDeregisterPostrequisite(src: Command, postreq: Command) {
-        deregisterPostrequisite(postreq)
+        cmd?.let {
+            it.cleanup()
+            commandManager.handleDeregisterAll(it)
+        }
     }
 }

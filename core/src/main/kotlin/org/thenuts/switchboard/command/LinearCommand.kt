@@ -24,7 +24,7 @@ class LinearCommand(val list: List<Command>) : Combinator() {
             if (!list[i].done) return
 
             list[i].cleanup()
-            deregisterAll()
+            handleDeregisterAll(list[i])
             i++
 
             if (i >= list.size) {
@@ -41,7 +41,7 @@ class LinearCommand(val list: List<Command>) : Combinator() {
     override fun cleanup() {
         if (i < list.size) {
             list[i].cleanup()
+            handleDeregisterAll(list[i])
         }
-        deregisterAll()
     }
 }
