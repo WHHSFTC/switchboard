@@ -2,7 +2,7 @@ package org.thenuts.switchboard.command
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.thenuts.switchboard.core.Frame
+import org.thenuts.switchboard.util.Frame
 
 class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreqs: List<Command> = listOf()) : CommandAbstract() {
     enum class State(val isSafe: Boolean = false) {

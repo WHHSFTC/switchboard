@@ -1,6 +1,5 @@
-package org.thenuts.switchboard.core
+package org.thenuts.switchboard.util
 
-import org.thenuts.switchboard.util.sinceJvmTime
 import kotlin.time.Duration
 
 data class Frame(val n: Long, val runtime: Duration, val step: Duration) {
@@ -15,3 +14,5 @@ data class Frame(val n: Long, val runtime: Duration, val step: Duration) {
             }
     }
 }
+
+fun Duration.Companion.sinceJvmTime(duration: Duration = Duration.ZERO) = System.nanoTime().nanoseconds - duration

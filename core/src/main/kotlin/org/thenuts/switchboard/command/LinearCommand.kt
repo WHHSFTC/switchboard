@@ -1,6 +1,6 @@
 package org.thenuts.switchboard.command
 
-import org.thenuts.switchboard.core.Frame
+import org.thenuts.switchboard.util.Frame
 
 class LinearCommand(val list: List<Command>) : Combinator() {
     private var i = 0

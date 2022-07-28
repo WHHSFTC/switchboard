@@ -3,7 +3,7 @@ package org.thenuts.switchboard.command
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.thenuts.switchboard.core.Frame
+import org.thenuts.switchboard.util.Frame
 import org.thenuts.switchboard.util.sinceJvmTime
 import kotlin.time.Duration
 

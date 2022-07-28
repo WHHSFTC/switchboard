@@ -1,6 +1,6 @@
 package org.thenuts.switchboard.command
 
-import org.thenuts.switchboard.core.Frame
+import org.thenuts.switchboard.util.Frame
 
 class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combinator() {
     override var done: Boolean = false

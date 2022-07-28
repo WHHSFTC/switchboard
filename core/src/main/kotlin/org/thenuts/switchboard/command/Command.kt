@@ -1,6 +1,6 @@
 package org.thenuts.switchboard.command
 
-import org.thenuts.switchboard.core.Frame
+import org.thenuts.switchboard.util.Frame
 
 interface Command {
     fun init() { }

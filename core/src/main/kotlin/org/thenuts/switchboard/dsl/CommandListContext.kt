@@ -1,8 +1,7 @@
 package org.thenuts.switchboard.dsl
 
 import org.thenuts.switchboard.command.*
-import org.thenuts.switchboard.core.Frame
-import org.thenuts.switchboard.scheduler.surelyList
+import org.thenuts.switchboard.util.Frame
 import kotlin.time.Duration
 
 class CommandListContext {
@@ -17,11 +16,11 @@ class CommandListContext {
     }
 
     fun awaitAll(vararg predicate: (Frame) -> Boolean) {
-        list += ConcurrentCommand(predicate.surelyList().map {AwaitCommand(it)}, awaitAll = true)
+        list += ConcurrentCommand(predicate.asList().map {AwaitCommand(it)}, awaitAll = true)
     }
 
-    fun race(vararg predicate: (Frame) -> Boolean) {
-        list += ConcurrentCommand(predicate.surelyList().map {AwaitCommand(it)}, awaitAll = false)
+    fun awaitAny(vararg predicate: (Frame) -> Boolean) {
+        list += ConcurrentCommand(predicate.asList().map {AwaitCommand(it)}, awaitAll = false)
     }
 
     fun awaitUntil(timeout: Duration, predicate: (Frame) -> Boolean) {

@@ -1,6 +1,6 @@
 package org.thenuts.switchboard.command
 
-import org.thenuts.switchboard.core.Frame
+import org.thenuts.switchboard.util.Frame
 
 // TODO refactor command interface to reuse commands without real time generation
 class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, val commandBuilder: () -> Command) : Combinator() {
