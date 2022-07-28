@@ -3,23 +3,16 @@ package org.thenuts.switchboard.command
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.thenuts.switchboard.core.Frame
 import org.thenuts.switchboard.util.sinceJvmTime
 import kotlin.time.Duration
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommandSchedulerTest {
-    @Test
-    fun orderTest() {
-        val a = MockCommand(8)
-        val b = MockCommand(8, prereqs = listOf(a))
-        val c = MockCommand(8, prereqs = listOf(a), postreqs = listOf(b))
-
+    private fun runTest(insertions: List<Command>, correctOrder: List<Command>): CommandScheduler {
         val sched = CommandScheduler()
-
-        sched.addCommand(b)
-        sched.addCommand(c)
-        sched.addCommand(a)
+        insertions.forEach { sched.addCommand(it) }
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
 
@@ -28,12 +21,32 @@ class CommandSchedulerTest {
             sched.update(frame)
         }
 
-        assertArrayEquals(listOf(a, c, b).toTypedArray(), sched.nodes.filterIsInstance<CommandScheduler.Node.CommandNode>().map { it.cmd }.toTypedArray())
+        assertArrayEquals(correctOrder.toTypedArray(), sched.nodes.filterIsInstance<CommandScheduler.Node.CommandNode>().map { it.cmd }.toTypedArray())
 
         sched.clear()
 
         assertArrayEquals(sched.nodes.map { true }.toTypedArray(), sched.nodes.map {
             (it as? CommandScheduler.Node.CommandNode)?.let { (it.cmd as MockCommand).state.isSafe } ?: true
         }.toTypedArray())
+
+        return sched
+    }
+
+    @Test
+    fun orderTest() {
+        val a = MockCommand(8)
+        val b = MockCommand(8, prereqs = listOf(a))
+        val c = MockCommand(8, prereqs = listOf(a), postreqs = listOf(b))
+
+        runTest(listOf(a, b, c), listOf(a, c, b))
+    }
+
+    @Test
+    fun cycleTest() {
+        val a = MockCommand(8)
+        val b = MockCommand(8, prereqs = listOf(a))
+        val c = MockCommand(8, prereqs = listOf(b), postreqs = listOf(a))
+
+        runTest(listOf(a, b, c), listOf(a, b, c))
     }
 }
