@@ -2,7 +2,7 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.core.Frame
 
-class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : CommandAbstract(), CommandManager {
+class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combinator() {
     override var done: Boolean = false
     private lateinit var cmd: Command
 
@@ -25,30 +25,16 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Comman
         if (cmd.done) {
             done = true
             cmd.cleanup()
+            deregisterAll()
         }
     }
 
     override fun cleanup() {
         if (!done) {
             cmd.cleanup()
+            deregisterAll()
         }
     }
 
     data class Case<T>(val pred: (T) -> Boolean, val command: Command)
-
-    override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
-        registerPrequisite(prereq)
-    }
-
-    override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
-        registerPostrequisite(postreq)
-    }
-
-    override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
-        deregisterPrequisite(prereq)
-    }
-
-    override fun handleDeregisterPostrequisite(src: Command, postreq: Command) {
-        deregisterPostrequisite(postreq)
-    }
 }

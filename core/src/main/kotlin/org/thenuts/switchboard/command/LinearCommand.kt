@@ -2,7 +2,7 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.core.Frame
 
-class LinearCommand(val list: List<Command>) : CommandAbstract(), CommandManager {
+class LinearCommand(val list: List<Command>) : Combinator() {
     private var i = 0
 
     override var done: Boolean = false
@@ -24,6 +24,7 @@ class LinearCommand(val list: List<Command>) : CommandAbstract(), CommandManager
             if (!list[i].done) return
 
             list[i].cleanup()
+            deregisterAll()
             i++
 
             if (i >= list.size) {
@@ -41,21 +42,6 @@ class LinearCommand(val list: List<Command>) : CommandAbstract(), CommandManager
         if (i < list.size) {
             list[i].cleanup()
         }
-    }
-
-    override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
-        registerPrequisite(prereq)
-    }
-
-    override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
-        registerPostrequisite(postreq)
-    }
-
-    override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
-        deregisterPrequisite(prereq)
-    }
-
-    override fun handleDeregisterPostrequisite(src: Command, postreq: Command) {
-        deregisterPostrequisite(postreq)
+        deregisterAll()
     }
 }

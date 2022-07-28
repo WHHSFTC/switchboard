@@ -9,8 +9,6 @@ class CommandScheduler : CommandManager {
 
     private val edges = mutableSetOf<Edge>()
 
-//    var resources = mutableMapOf<Any, Resource>()
-
     private val edgeRemovals = mutableListOf<Edge>()
     private val edgeInsertions = mutableListOf<Edge>()
     private val insertions = mutableListOf<Node>()
@@ -41,8 +39,10 @@ class CommandScheduler : CommandManager {
         }
     }
 
-    fun Resource.node() = _nodes.find { it is Node.ResourceNode && it.res == this }
-    fun Command.node() = _nodes.find { it is Node.CommandNode && it.cmd == this }
+    data class Resource(val key: Any, val value: Any, val scope: Command?)
+
+    private fun Resource.node() = _nodes.find { it is Node.ResourceNode && it.res == this }
+    private fun Command.node() = _nodes.find { it is Node.CommandNode && it.cmd == this }
 
     fun addCommand(cmd: Command): Boolean {
         if (cmd.node() != null) return false
@@ -54,6 +54,29 @@ class CommandScheduler : CommandManager {
         removals += cmd.node() ?: return false
         return true
     }
+
+//    override fun offerResource(scope: Command, key: Any, value: Any, mutable: Boolean, internal: Boolean) {
+//        resources[key] = Resource(key, value, scope)
+//    }
+//
+//    override fun requestResource(user: Command, key: Any, mutable: Boolean, internal: Boolean): Any? {
+//        synchronized(resources) {
+//            if (key in resources) {
+//                val res = resources[key]!!
+//                res.scope = user
+//            }
+//        }
+//        return null
+//    }
+//
+//    override fun releaseResource(src: Command, key: Any) {
+//        synchronized(resources) {
+//            if (key in resources) {
+//                return resources[key]!!.value
+//            }
+//        }
+//    }
+
 
     // CommandParent methods
     override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
@@ -72,37 +95,17 @@ class CommandScheduler : CommandManager {
         edgeRemovals.add(Edge(Edge.Owner.AFTER, src.node() ?: return, postreq.node() ?: return))
     }
 
-/*
-    override fun handleFinish(src: Command) {
-        removals.add(src)
-    }
-
-*/
-    data class Resource(val key: Any, val value: Any, val owner: Command?)
-
-/*
-    override fun offerResource(provider: Command, key: Any, value: Any, mutable: Boolean, internal: Boolean) {
-        resources[key] = Resource(value, provider)
-    }
-
-    override fun requestResource(user: Command, key: Any, mutable: Boolean, internal: Boolean): Any? {
-        synchronized(resources) {
-            if (key in resources) {
-                val res = resources[key]!!
-                res.owner = user
-            }
-        }
-        return null
-    }
-
-    override fun releaseResource(src: Command, key: Any) {
-        synchronized(resources) {
-            if (key in resources) {
-                return resources[key]!!.value
-            }
+    override fun handleDeregisterAll(src: Command) {
+        val srcNode = src.node() ?: return
+        edges.mapNotNullTo(edgeRemovals) { (o, b, a) ->
+            if (srcNode == b && o + Edge.Owner.AFTER == Edge.Owner.BOTH) // has BEFORE
+                Edge(Edge.Owner.BEFORE, b, a)
+            else if (srcNode == a && o + Edge.Owner.BEFORE == Edge.Owner.BOTH) // has AFTER
+                Edge(Edge.Owner.AFTER, b, a)
+            else
+                null
         }
     }
-*/
 
     fun update(frame: Frame) {
         removeEdges()

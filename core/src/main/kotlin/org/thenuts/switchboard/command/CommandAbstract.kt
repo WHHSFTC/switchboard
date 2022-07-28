@@ -23,4 +23,8 @@ abstract class CommandAbstract : Command {
     fun deregisterPostrequisite(postreq: Command) {
         this.manager.handleDeregisterPostrequisite(this, postreq)
     }
+
+    fun deregisterAll() {
+        this.manager.handleDeregisterAll(this)
+    }
 }

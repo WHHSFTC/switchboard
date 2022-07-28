@@ -2,7 +2,7 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.core.Frame
 
-class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) : CommandAbstract(), CommandManager {
+class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) : Combinator() {
     var mut = list.toMutableList()
 
     override var done: Boolean = false
@@ -36,21 +36,6 @@ class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) :
 
     override fun cleanup() {
         mut.forEach { it.cleanup() }
-    }
-
-    override fun handleRegisterPrerequisite(src: Command, prereq: Command) {
-        registerPrequisite(prereq)
-    }
-
-    override fun handleRegisterPostrequisite(src: Command, postreq: Command) {
-        registerPostrequisite(postreq)
-    }
-
-    override fun handleDeregisterPrerequisite(src: Command, prereq: Command) {
-        deregisterPrequisite(prereq)
-    }
-
-    override fun handleDeregisterPostrequisite(src: Command, postreq: Command) {
-        deregisterPostrequisite(postreq)
+        deregisterAll()
     }
 }
