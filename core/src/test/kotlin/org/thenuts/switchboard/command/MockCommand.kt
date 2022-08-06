@@ -35,7 +35,7 @@ class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreq
         assertEquals(State.INIT, state, "start() should be called after init(), not ${state}")
         state = State.START
 
-        prereqs.map { registerPrequisite(it) }
+        prereqs.map { registerPrerequisite(it) }
         postreqs.map { registerPostrequisite(it) }
     }
 
@@ -55,7 +55,7 @@ class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreq
         assertTrue(state == State.START || state == State.UPDATE, "cleanup() should be called after start() or update(), not ${state}")
         state = State.CLEANUP
 
-        prereqs.map { deregisterPrequisite(it) }
+        prereqs.map { deregisterPrerequisite(it) }
         postreqs.map { deregisterPostrequisite(it) }
     }
 }

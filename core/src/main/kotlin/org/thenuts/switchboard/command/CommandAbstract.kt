@@ -6,7 +6,7 @@ abstract class CommandAbstract : Command {
         commandManager = manager
     }
 
-    fun registerPrequisite(prereq: Command) {
+    fun registerPrerequisite(prereq: Command) {
         commandManager.handleRegisterEdge(this, prereq, this)
     }
 
@@ -14,7 +14,7 @@ abstract class CommandAbstract : Command {
         commandManager.handleRegisterEdge(this, this, postreq)
     }
     
-    fun deregisterPrequisite(prereq: Command) {
+    fun deregisterPrerequisite(prereq: Command) {
         commandManager.handleDeregisterEdge(this, prereq, this)
     }
 
