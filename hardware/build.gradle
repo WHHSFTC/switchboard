@@ -17,9 +17,9 @@ android {
 apply plugin: 'kotlin-android'
 
 dependencies {
-    compileOnly 'org.firstinspires.ftc:RobotCore:7.1.0'
-    compileOnly 'org.firstinspires.ftc:Hardware:7.1.0'
-    compileOnly 'org.firstinspires.ftc:FtcCommon:7.1.0'
+    compileOnly 'org.firstinspires.ftc:RobotCore:7.2.0'
+    compileOnly 'org.firstinspires.ftc:Hardware:7.2.0'
+    compileOnly 'org.firstinspires.ftc:FtcCommon:7.2.0'
 
     implementation project(':core')
 }
