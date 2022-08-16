@@ -2,6 +2,7 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.util.Frame
 
+context(CommandContext)
 class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combinator() {
     override var done: Boolean = false
     private lateinit var cmd: Command
@@ -10,31 +11,40 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combin
         val v = supplier()
         for (c in cases) {
             if (c.pred(v)) {
-                cmd = c.command
-                cmd.setManager(this)
-                cmd.init()
+                cmd = newCommand(c.commandSupplier)
                 cmd.start(frame)
+                if (cmd.done) {
+                    close(cmd)
+                    done = true
+                }
                 return
             }
         }
         cmd = Command.NOP
+        done = true
     }
 
     override fun update(frame: Frame) {
-        cmd.update(frame)
         if (cmd.done) {
+            close(cmd)
             done = true
-            cmd.cleanup()
-            deregisterAll()
+            return
+        }
+
+        cmd.update(frame)
+
+        if (cmd.done) {
+            close(cmd)
+            done = true
         }
     }
 
     override fun cleanup() {
         if (!done) {
-            cmd.cleanup()
-            deregisterAll()
+            close(cmd)
+            done = true
         }
     }
 
-    data class Case<T>(val pred: (T) -> Boolean, val command: Command)
+    data class Case<T>(val pred: (T) -> Boolean, val commandSupplier: CommandSupplier)
 }

@@ -160,8 +160,6 @@ class CommandScheduler : CommandManager {
         _nodes.addAll(insertions)
         insertions.forEach {
             if (it is Node.CommandNode) {
-                it.cmd.setManager(this)
-                it.cmd.init()
                 it.cmd.start(frame)
             }
         }
