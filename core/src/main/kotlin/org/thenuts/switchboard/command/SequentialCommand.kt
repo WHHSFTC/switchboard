@@ -3,9 +3,17 @@ package org.thenuts.switchboard.command
 import org.thenuts.switchboard.util.Frame
 
 context(CommandContext)
-class SequentialCommand(sequence: Sequence<CommandSupplier>) : Combinator() {
+class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : Combinator() {
     private lateinit var cmd: Command
-    val iter = sequence.iterator()
+    val iter: Iterator<Command>
+
+    init {
+        iter = if (pregen) {
+            sequence.toList().map { newCommand(it) }.iterator()
+        } else {
+            sequence.map { newCommand(it) }.iterator()
+        }
+    }
 
     override var done: Boolean = false
 
@@ -16,9 +24,7 @@ class SequentialCommand(sequence: Sequence<CommandSupplier>) : Combinator() {
                 return
             }
 
-            val supp = iter.next()
-
-            cmd = newCommand(supp)
+            cmd = iter.next()
             cmd.start(frame)
 
             if (!cmd.done)
@@ -38,9 +44,7 @@ class SequentialCommand(sequence: Sequence<CommandSupplier>) : Combinator() {
                     return
                 }
 
-                val supp = iter.next()
-
-                cmd = newCommand(supp)
+                cmd = iter.next()
                 cmd.start(frame)
             }
 
