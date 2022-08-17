@@ -2,6 +2,7 @@ package org.thenuts.switchboard.dsl
 
 import org.thenuts.switchboard.command.*
 
+@SwitchboardDsl
 class SwitchCommandContext<T> {
     private val list: MutableList<SwitchCommand.Case<T>> = mutableListOf()
 
@@ -24,7 +25,9 @@ class SwitchCommandContext<T> {
     fun build() = list
 }
 
-fun <T> mkSwitch(supplier: () -> T, b: SwitchCommandContext<T>.() -> Unit)
-        = SwitchCommand<T>(supplier, SwitchCommandContext<T>().apply(b).build())
+fun <T> mkSwitch(supplier: () -> T, b: SwitchCommandContext<T>.() -> Unit): CommandSupplier {
+    val cases = SwitchCommandContext<T>().apply(b).build()
+    return { SwitchCommand(supplier, cases) }
+}
 
 fun SwitchCommandContext<Boolean>.then(b: CommandListContext.() -> Unit) = this.value(true, b)
