@@ -9,8 +9,7 @@ import kotlin.time.Duration
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommandSchedulerTest {
-    private fun runTest(insertions: List<Command>, correctOrder: List<Command>): CommandScheduler {
-        val sched = CommandScheduler()
+    private fun runTest(sched: CommandScheduler, insertions: List<Command>, correctOrder: List<Command>): CommandScheduler {
         insertions.forEach { sched.addCommand(it) }
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
@@ -33,19 +32,25 @@ class CommandSchedulerTest {
 
     @Test
     fun orderTest() {
-        val a = MockCommand(8)
-        val b = MockCommand(8, prereqs = listOf(a))
-        val c = MockCommand(8, prereqs = listOf(a), postreqs = listOf(b))
+        val sched = CommandScheduler()
 
-        runTest(listOf(a, b, c), listOf(a, c, b))
+        with(CommandContext(manager = sched)) {
+            val a = MockCommand(8)
+            val b = MockCommand(8, prereqs = listOf(a))
+            val c = MockCommand(8, prereqs = listOf(a), postreqs = listOf(b))
+            runTest(sched, listOf(a, b, c), listOf(a, c, b))
+        }
     }
 
     @Test
     fun cycleTest() {
-        val a = MockCommand(8)
-        val b = MockCommand(8, prereqs = listOf(a))
-        val c = MockCommand(8, prereqs = listOf(b), postreqs = listOf(a))
+        val sched = CommandScheduler()
 
-        runTest(listOf(a, b, c), listOf(a, b, c))
+        with(CommandContext(manager = sched)) {
+            val a = MockCommand(8)
+            val b = MockCommand(8, prereqs = listOf(a))
+            val c = MockCommand(8, prereqs = listOf(b), postreqs = listOf(a))
+            runTest(sched, listOf(a, b, c), listOf(a, b, c))
+        }
     }
 }

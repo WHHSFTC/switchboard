@@ -1,14 +1,12 @@
 package org.thenuts.switchboard.command
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.thenuts.switchboard.util.Frame
 
+context(CommandContext)
 class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreqs: List<Command> = listOf()) : CommandAbstract() {
     enum class State(val isSafe: Boolean = false) {
         NOTHING(true),
-        SET_MANAGER(true),
-        INIT,
         START,
         UPDATE,
         CLEANUP(true)
@@ -18,21 +16,9 @@ class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreq
 
     override var done: Boolean = false
 
-    override fun setManager(manager: CommandManager) {
-        super.setManager(manager)
-        assertEquals(State.NOTHING, state, "setManager() should be first function called on a Command")
-        state = State.SET_MANAGER
-    }
-
-    override fun init() {
-        super.init()
-        assertEquals(State.SET_MANAGER, state, "init() should be called after setManager(), not ${state}")
-        state = State.INIT
-    }
-
     override fun start(frame: Frame) {
         super.start(frame)
-        assertEquals(State.INIT, state, "start() should be called after init(), not ${state}")
+        assertEquals(State.NOTHING, state, "start() should be called first, not after ${state}")
         state = State.START
 
         prereqs.map { registerPrerequisite(it) }
@@ -41,6 +27,7 @@ class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreq
 
     override fun update(frame: Frame) {
         super.update(frame)
+        assertFalse(done, "update() should never be called when done is true")
         assertTrue(state == State.START || state == State.UPDATE, "update() should be called after start() or update(), not ${state}")
         state = State.UPDATE
 

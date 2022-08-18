@@ -6,4 +6,7 @@ class MockManager : CommandManager {
     override fun handleDeregisterEdge(owner: Command, before: Command, after: Command) { }
 
     override fun handleRegisterEdge(owner: Command, before: Command, after: Command) { }
+
+    fun newCommand(supp: CommandSupplier)
+        = with(CommandContext(manager = this), supp)
 }

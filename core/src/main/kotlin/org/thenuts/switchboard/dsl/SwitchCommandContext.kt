@@ -18,7 +18,7 @@ class SwitchCommandContext<T> {
         matches({v}, b)
     }
 
-    fun fallback(b: CommandListContext.() -> Unit) {
+    fun default(b: CommandListContext.() -> Unit) {
         satisfies({ true }, b)
     }
 

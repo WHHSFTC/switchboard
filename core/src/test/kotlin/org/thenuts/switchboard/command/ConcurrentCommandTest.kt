@@ -12,11 +12,9 @@ class ConcurrentCommandTest {
     @Test
     fun interruptTest() {
         val manager = MockManager()
-        val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
-
-        concurrent.setManager(manager)
-
-        concurrent.init()
+        val concurrent = manager.newCommand {
+            ConcurrentCommand(listOf({MockCommand(4)}, {MockCommand(4)}, {MockCommand(4)}))
+        } as ConcurrentCommand
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
@@ -30,17 +28,15 @@ class ConcurrentCommandTest {
 
         concurrent.cleanup()
 
-        assertArrayEquals(concurrent.list.map { true }.toTypedArray(), concurrent.list.map { (it as MockCommand).state.isSafe }.toTypedArray())
+        assertArrayEquals(concurrent.cmds.map { true }.toTypedArray(), concurrent.cmds.map { (it as MockCommand).state.isSafe }.toTypedArray())
     }
 
     @Test
     fun awaitAllTest() {
         val manager = MockManager()
-        val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)), awaitAll = true)
-
-        concurrent.setManager(manager)
-
-        concurrent.init()
+        val concurrent = manager.newCommand {
+            ConcurrentCommand(listOf({MockCommand(4)}, {MockCommand(4)}, {MockCommand(4)}), awaitAll = true)
+        } as ConcurrentCommand
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
@@ -52,18 +48,16 @@ class ConcurrentCommandTest {
 
         concurrent.cleanup()
 
-        assertArrayEquals(concurrent.list.map { true }.toTypedArray(), concurrent.list.map { it.done }.toTypedArray())
-        assertArrayEquals(concurrent.list.map { true }.toTypedArray(), concurrent.list.map { (it as MockCommand).state.isSafe }.toTypedArray())
+        assertArrayEquals(concurrent.cmds.map { true }.toTypedArray(), concurrent.cmds.map { it.done }.toTypedArray())
+        assertArrayEquals(concurrent.cmds.map { true }.toTypedArray(), concurrent.cmds.map { (it as MockCommand).state.isSafe }.toTypedArray())
     }
 
     @Test
     fun raceTest() {
         val manager = MockManager()
-        val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(3), MockCommand(4)), awaitAll = false)
-
-        concurrent.setManager(manager)
-
-        concurrent.init()
+        val concurrent = manager.newCommand {
+            ConcurrentCommand(listOf({MockCommand(4)}, {MockCommand(4)}, {MockCommand(4)}), awaitAll = true)
+        } as ConcurrentCommand
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
@@ -75,7 +69,7 @@ class ConcurrentCommandTest {
 
         concurrent.cleanup()
 
-        assertArrayEquals(listOf(false, true, false).toTypedArray(), concurrent.list.map { it.done }.toTypedArray())
-        assertArrayEquals(concurrent.list.map { true }.toTypedArray(), concurrent.list.map { (it as MockCommand).state.isSafe }.toTypedArray())
+        assertArrayEquals(listOf(false, true, false).toTypedArray(), concurrent.cmds.map { it.done }.toTypedArray())
+        assertArrayEquals(concurrent.cmds.map { true }.toTypedArray(), concurrent.cmds.map { (it as MockCommand).state.isSafe }.toTypedArray())
     }
 }

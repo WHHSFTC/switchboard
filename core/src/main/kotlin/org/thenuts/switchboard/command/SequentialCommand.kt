@@ -5,7 +5,8 @@ import org.thenuts.switchboard.util.Frame
 context(CommandContext)
 class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : Combinator() {
     private lateinit var cmd: Command
-    val iter: Iterator<Command>
+    private val iter: Iterator<Command>
+    internal val usedCommands = mutableListOf<Command>()
 
     init {
         iter = if (pregen) {
@@ -25,6 +26,7 @@ class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : 
             }
 
             cmd = iter.next()
+            usedCommands += cmd
             cmd.start(frame)
 
             if (!cmd.done)
@@ -45,6 +47,7 @@ class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : 
                 }
 
                 cmd = iter.next()
+                usedCommands += cmd
                 cmd.start(frame)
             }
 
