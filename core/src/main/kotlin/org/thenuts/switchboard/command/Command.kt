@@ -3,6 +3,7 @@ package org.thenuts.switchboard.command
 import org.thenuts.switchboard.util.Frame
 
 interface Command {
+    fun init(ctx: CommandContext) { }
     fun start(frame: Frame) { }
     fun update(frame: Frame) { }
     fun cleanup() { }

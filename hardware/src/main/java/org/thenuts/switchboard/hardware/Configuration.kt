@@ -26,11 +26,6 @@ class Configuration(val hwMap: HardwareMap, val logger: Logger) {
                 = getOutput(::CRServoImpl, ::CRServoStub, key)
     }
 
-    val analogOutputs = object : DeviceMap<AnalogOutput> {
-        override operator fun get(key: String): AnalogOutput
-                = getOutput(::AnalogOutputImpl, ::AnalogOutputStub, key)
-    }
-
     val digitalOutputs = object : DeviceMap<DigitalOutput> {
         override operator fun get(key: String): DigitalOutput
                 = getOutput(::DigitalOutputImpl, ::DigitalOutputStub, key)

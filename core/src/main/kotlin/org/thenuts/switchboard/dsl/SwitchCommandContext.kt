@@ -27,7 +27,9 @@ class SwitchCommandContext<T> {
 
 fun <T> mkSwitch(supplier: () -> T, b: SwitchCommandContext<T>.() -> Unit): CommandSupplier {
     val cases = SwitchCommandContext<T>().apply(b).build()
-    return { SwitchCommand(supplier, cases) }
+    return {
+        SwitchCommand(supplier, cases)
+    }
 }
 
 fun SwitchCommandContext<Boolean>.then(b: CommandListContext.() -> Unit) = this.value(true, b)

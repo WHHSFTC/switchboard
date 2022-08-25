@@ -4,4 +4,4 @@ data class CommandContext(
     val manager: CommandManager
 )
 
-typealias CommandSupplier = CommandContext.() -> Command
+typealias CommandSupplier = () -> Command

@@ -2,21 +2,29 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.util.Frame
 
-context(CommandContext)
-class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : Combinator() {
+class SequentialCommand(private val sequence: Sequence<Command>, val initAll: Boolean) : Combinator() {
     private lateinit var cmd: Command
-    private val iter: Iterator<Command>
-    internal val usedCommands = mutableListOf<Command>()
-
-    init {
-        iter = if (pregen) {
-            sequence.toList().map { newCommand(it) }.iterator()
-        } else {
-            sequence.map { newCommand(it) }.iterator()
-        }
-    }
+    private lateinit var iter: Iterator<Command>
 
     override var done: Boolean = false
+
+    override fun init(ctx: CommandContext) {
+        super.init(ctx)
+
+        val cmds = sequence.map {
+            it.init(subCtx)
+            it
+        }
+
+        iter = if (initAll) {
+            // collecting sequence into list forces all commands to be inited on SequentialCommand init
+            // requires that sequence terminates
+            cmds.toList().iterator()
+        } else {
+            // lazily initializes commands as iter.next() is called, usually ideal behavior
+            cmds.iterator()
+        }
+    }
 
     override fun start(frame: Frame) {
         while (true) {
@@ -26,7 +34,6 @@ class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : 
             }
 
             cmd = iter.next()
-            usedCommands += cmd
             cmd.start(frame)
 
             if (!cmd.done)
@@ -47,7 +54,6 @@ class SequentialCommand(sequence: Sequence<CommandSupplier>, pregen: Boolean) : 
                 }
 
                 cmd = iter.next()
-                usedCommands += cmd
                 cmd.start(frame)
             }
 

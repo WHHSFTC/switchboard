@@ -31,16 +31,16 @@ class CommandListContext {
         add { DelayCommand(duration) }
     }
 
-    fun times(n: Int, b: CommandListContext.() -> Unit) {
-        linear { repeat(n) { linear(b) } }
+    fun times(n: Int, initAll: Boolean = false, b: CommandListContext.() -> Unit) {
+        linear { repeat(n) { linear(initAll, b) } }
     }
 
     fun task(f: (Frame) -> Unit) {
         add { SimpleCommand(f) }
     }
 
-    fun linear(b: CommandListContext.() -> Unit) {
-        add(mkLinear(b))
+    fun linear(initAll: Boolean = false, b: CommandListContext.() -> Unit) {
+        add(mkLinear(initAll, b))
     }
 
     fun concurrent(awaitAll: Boolean = true, b: CommandListContext.() -> Unit) {
@@ -54,21 +54,29 @@ class CommandListContext {
     fun build() = list
 }
 
-fun mkLinear(b: CommandListContext.() -> Unit): CommandSupplier {
+fun mkLinear(initAll: Boolean = false, b: CommandListContext.() -> Unit): CommandSupplier {
     val list = CommandListContext().apply(b).build()
     val seq = Sequence { list.iterator() }
-    return { SequentialCommand(Sequence { list.iterator() }, pregen = true) }
+    return {
+        val iter = list.iterator()
+        SequentialCommand(Sequence { iter }, initAll)
+    }
 }
 
 fun mkConcurrent(awaitAll: Boolean = true, b: CommandListContext.() -> Unit): CommandSupplier {
     val list = CommandListContext().apply(b).build()
-    return { ConcurrentCommand(list, awaitAll) }
+    return {
+        ConcurrentCommand(list, awaitAll)
+    }
 }
 
-fun mkLoop(b: CommandListContext.() -> Unit): CommandSupplier {
+fun mkLoop(initAll: Boolean = false, b: CommandListContext.() -> Unit): CommandSupplier {
     val list = CommandListContext().apply(b).build()
-    val inner = Sequence { list.iterator() }
-    val outer = generateSequence<CommandSupplier> { { SequentialCommand(inner, pregen = true) } }
-    return { SequentialCommand(outer, pregen = false) }
+    return {
+        val outer = generateSequence<Command> {
+            val iter = list.iterator()
+            SequentialCommand(Sequence { iter }, initAll)
+        }
+        SequentialCommand(outer, initAll = false)
+    }
 }
-
