@@ -20,9 +20,7 @@ class SwitchCommandTest {
                 SwitchCommand.Case({ true }, MockCommand(4)),
             ))
 
-            switch.setManager(manager)
-
-            switch.init()
+            switch.init(manager)
 
             var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
             switch.start(frame)

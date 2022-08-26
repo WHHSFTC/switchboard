@@ -1,5 +1,7 @@
 package org.thenuts.switchboard.command
 
+import org.thenuts.switchboard.util.Frame
+
 @Suppress("NAME_SHADOWING")
 abstract class Combinator : CommandAbstract(), CommandManager {
     override fun handleRegisterEdge(owner: Command, before: Command, after: Command) {
@@ -16,5 +18,15 @@ abstract class Combinator : CommandAbstract(), CommandManager {
 
     override fun handleDeregisterAll(src: Command) {
         commandManager.handleDeregisterAll(src)
+    }
+
+    protected fun setup(cmd: Command, frame: Frame) {
+        cmd.init(this)
+        cmd.start(frame)
+    }
+
+    protected fun close(cmd: Command) {
+        cmd.cleanup()
+        commandManager.handleDeregisterAll(cmd)
     }
 }

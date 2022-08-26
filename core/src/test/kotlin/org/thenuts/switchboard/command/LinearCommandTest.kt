@@ -14,9 +14,7 @@ class LinearCommandTest {
         val manager = MockManager()
         val linear = LinearCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
 
-        linear.setManager(manager)
-
-        linear.init()
+        linear.init(manager)
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         linear.start(frame)

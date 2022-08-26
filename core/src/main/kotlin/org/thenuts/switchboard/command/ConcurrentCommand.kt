@@ -3,42 +3,44 @@ package org.thenuts.switchboard.command
 import org.thenuts.switchboard.util.Frame
 
 class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) : Combinator() {
-    var mut = list.toMutableList()
+    val mut: MutableList<Command> = list.toMutableList()
 
     override var done: Boolean = false
-
-    override fun init() {
-        list.forEach { it.setManager(this) }
-        list.forEach { it.init() }
-    }
+        private set
 
     override fun start(frame: Frame) {
-        mut = list.toMutableList()
-        mut.forEach { it.start(frame) }
+        mut.forEach {
+            setup(it, frame)
+        }
+        removeDone()
     }
 
     override fun update(frame: Frame) {
+        mut.forEach { it.update(frame) }
+
+        removeDone()
+
         if (mut.isEmpty() || (!awaitAll && mut.size != list.size)) {
-            mut.forEach { it.cleanup(); commandManager.handleDeregisterAll(it) }
+            mut.forEach { close(it) }
             mut.clear()
             done = true
-        } else {
-            mut.forEach { it.update(frame) }
-        }
-
-        mut.removeAll { cmd ->
-            if (cmd.done) {
-                cmd.cleanup()
-                commandManager.handleDeregisterAll(cmd)
-                true
-            } else false
         }
     }
 
     override fun cleanup() {
         mut.forEach {
-            it.cleanup()
-            handleDeregisterAll(it)
+            close(it)
+        }
+    }
+
+    private fun removeDone() {
+        mut.removeAll { cmd ->
+            if (cmd.done) {
+                close(cmd)
+                true
+            } else {
+                false
+            }
         }
     }
 }

@@ -6,42 +6,44 @@ class LinearCommand(val list: List<Command>) : Combinator() {
     private var i = 0
 
     override var done: Boolean = false
+        private set
 
     override fun start(frame: Frame) {
-        if (list.isEmpty()) {
-            done = true
-            return
-        }
-        list[0].setManager(this)
-        list[0].init()
-        list[0].start(frame)
+        startUntilNotDone(frame)
     }
 
+    // run one update and, if done, cleanup then run as many starts as possible
     override fun update(frame: Frame) {
-        do {
-            list[i].update(frame)
+        list[i].update(frame)
 
-            if (!list[i].done) return
+        if (!list[i].done) return
 
-            list[i].cleanup()
-            handleDeregisterAll(list[i])
-            i++
+        close(list[i])
+        i++
 
+        startUntilNotDone(frame)
+    }
+
+    override fun cleanup() {
+        if (i < list.size) {
+            close(list[i])
+        }
+    }
+
+    private fun startUntilNotDone(frame: Frame) {
+        while (true) {
             if (i >= list.size) {
                 done = true
                 return
             }
 
-            list[i].setManager(this)
-            list[i].init()
-            list[i].start(frame)
-        } while (list[i].done)
-    }
+            setup(list[i], frame)
 
-    override fun cleanup() {
-        if (i < list.size) {
-            list[i].cleanup()
-            handleDeregisterAll(list[i])
+            if (!list[i].done)
+                return
+
+            close(list[i])
+            i++
         }
     }
 }

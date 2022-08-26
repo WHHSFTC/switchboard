@@ -7,10 +7,10 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
     private var cmd: Command? = null
     override var done: Boolean = false
 
-    override fun init() {
+    override fun init(manager: CommandManager) {
+        super.init(manager)
         cmd = commandBuilder().also {
-            it.setManager(this)
-            it.init()
+            it.init(this)
         }
     }
 
@@ -23,8 +23,7 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
     override fun update(frame: Frame) {
         if ((interrupt || cmd == null) && pred(frame)) {
             cmd?.let {
-                it.cleanup()
-                commandManager.handleDeregisterAll(it)
+                close(it)
             }
             cmd = null
             done = true
@@ -32,24 +31,21 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
         }
 
         val c = cmd ?: commandBuilder().also {
-            it.setManager(this)
-            it.init()
+            it.init(this)
             it.start(frame)
         }
 
         c.update(frame)
 
         if (c.done) {
-            c.cleanup()
-            commandManager.handleDeregisterAll(c)
+            close(c)
             cmd = null
         }
     }
 
     override fun cleanup() {
         cmd?.let {
-            it.cleanup()
-            commandManager.handleDeregisterAll(it)
+            close(it)
         }
     }
 }

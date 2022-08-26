@@ -11,9 +11,7 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combin
         for (c in cases) {
             if (c.pred(v)) {
                 cmd = c.command
-                cmd.setManager(this)
-                cmd.init()
-                cmd.start(frame)
+                setup(cmd, frame)
                 return
             }
         }
@@ -22,18 +20,11 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combin
 
     override fun update(frame: Frame) {
         cmd.update(frame)
-        if (cmd.done) {
-            done = true
-            cmd.cleanup()
-            deregisterAll()
-        }
+        done = cmd.done
     }
 
     override fun cleanup() {
-        if (!done) {
-            cmd.cleanup()
-            deregisterAll()
-        }
+        close(cmd)
     }
 
     data class Case<T>(val pred: (T) -> Boolean, val command: Command)

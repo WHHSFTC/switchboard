@@ -7,7 +7,6 @@ import org.thenuts.switchboard.util.Frame
 class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreqs: List<Command> = listOf()) : CommandAbstract() {
     enum class State(val isSafe: Boolean = false) {
         NOTHING(true),
-        SET_MANAGER(true),
         INIT,
         START,
         UPDATE,
@@ -18,15 +17,9 @@ class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreq
 
     override var done: Boolean = false
 
-    override fun setManager(manager: CommandManager) {
-        super.setManager(manager)
-        assertEquals(State.NOTHING, state, "setManager() should be first function called on a Command")
-        state = State.SET_MANAGER
-    }
-
-    override fun init() {
-        super.init()
-        assertEquals(State.SET_MANAGER, state, "init() should be called after setManager(), not ${state}")
+    override fun init(manager: CommandManager) {
+        super.init(manager)
+        assertEquals(State.NOTHING, state, "init() should be called first, not after ${state}")
         state = State.INIT
     }
 

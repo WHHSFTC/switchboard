@@ -1,5 +1,8 @@
 package org.thenuts.switchboard.command
 
+/**
+ * Interface to request edges between Commands and Resources from a Command
+ */
 interface CommandManager {
     fun handleRegisterEdge(owner: Command, before: Command, after: Command)
 

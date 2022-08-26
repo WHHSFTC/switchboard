@@ -2,7 +2,8 @@ package org.thenuts.switchboard.command
 
 abstract class CommandAbstract : Command {
     protected lateinit var commandManager: CommandManager
-    override fun setManager(manager: CommandManager) {
+
+    override fun init(manager: CommandManager) {
         commandManager = manager
     }
 
