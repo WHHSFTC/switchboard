@@ -6,14 +6,13 @@ class StrictCommand(val cmd: Command) : Combinator() {
     private var doneCheckAllowed = false
 
     enum class State(val stable: Boolean = false) {
-        PRE_INIT(true),
-        POST_INIT,
+        PRE_START(true),
         POST_START,
         POST_UPDATE,
         POST_CLEANUP(true)
     }
 
-    private var state: State = State.PRE_INIT
+    private var state: State = State.PRE_START
 
     override val done: Boolean
         get() {
@@ -22,15 +21,8 @@ class StrictCommand(val cmd: Command) : Combinator() {
             return cmd.done
         }
 
-    override fun init(manager: CommandManager) {
-        assert(state == State.PRE_INIT) { "init must be called first" }
-        super.init(manager)
-        cmd.init(this)
-        state = State.POST_INIT
-    }
-
     override fun start(frame: Frame) {
-        assert(state == State.POST_INIT) { "start must be called after init" }
+        assert(state == State.PRE_START) { "start must be called first" }
         cmd.start(frame)
         doneCheckAllowed = true
         state = State.POST_START

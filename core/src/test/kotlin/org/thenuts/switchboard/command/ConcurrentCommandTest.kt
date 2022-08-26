@@ -14,8 +14,6 @@ class ConcurrentCommandTest {
         val manager = MockManager()
         val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
 
-        concurrent.init(manager)
-
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
 
@@ -36,8 +34,6 @@ class ConcurrentCommandTest {
         val manager = MockManager()
         val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)), awaitAll = true)
 
-        concurrent.init(manager)
-
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
 
@@ -56,8 +52,6 @@ class ConcurrentCommandTest {
     fun raceTest() {
         val manager = MockManager()
         val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(3), MockCommand(4)), awaitAll = false)
-
-        concurrent.init(manager)
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)

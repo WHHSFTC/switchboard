@@ -7,13 +7,6 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
     private var cmd: Command? = null
     override var done: Boolean = false
 
-    override fun init(manager: CommandManager) {
-        super.init(manager)
-        cmd = commandBuilder().also {
-            it.init(this)
-        }
-    }
-
     override fun start(frame: Frame) {
         cmd = commandBuilder().also {
             it.start(frame)
@@ -31,7 +24,6 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
         }
 
         val c = cmd ?: commandBuilder().also {
-            it.init(this)
             it.start(frame)
         }
 

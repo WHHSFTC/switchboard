@@ -5,11 +5,10 @@ import org.thenuts.switchboard.util.Frame
 /**
  * Routines that include initialization, loop, and cleanup.
  *
- * The four functions must be called in order:
- * 1. [init] once
- * 2. [start] once
- * 3. [update] zero or more times
- * 4. [cleanup] once
+ * The three functions must be called in order:
+ * 1. [start] once
+ * 2. [update] zero or more times
+ * 3. [cleanup] once
  *
  * Before each call of [update], the command must be cleaned up if [done] is true.
  *
@@ -17,12 +16,6 @@ import org.thenuts.switchboard.util.Frame
  * time on the OpMode thread to spawn a new thread for any computation than to compute it directly).
  */
 interface Command {
-    /**
-     * Sets the [manager] and initializes command state.
-     * @param manager Handler for ordering and resource requests
-     */
-    fun init(manager: CommandManager) { }
-
     /**
      * Called once per command unconditionally.
      * @param frame Current scheduler frame

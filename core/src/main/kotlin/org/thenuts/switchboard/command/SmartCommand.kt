@@ -11,14 +11,11 @@ class SmartCombinator(val supplier: SmartContext.() -> Command) : Combinator() {
     override var done: Boolean = false
         private set
 
-    override fun init(manager: CommandManager) {
-        super.init(manager)
+    override fun start(frame: Frame) {
         done = false
         val ctx = SmartContext(manager = this)
         cmd = with(ctx) { supplier() }
-    }
 
-    override fun start(frame: Frame) {
         cmd!!.start(frame)
         done = cmd!!.done
     }

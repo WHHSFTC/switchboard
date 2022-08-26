@@ -6,26 +6,19 @@ import org.thenuts.switchboard.util.Frame
 
 class MockCommand(var n: Int, val prereqs: List<Command> = listOf(), val postreqs: List<Command> = listOf()) : CommandAbstract() {
     enum class State(val isSafe: Boolean = false) {
-        NOTHING(true),
-        INIT,
+        FIRST(true),
         START,
         UPDATE,
         CLEANUP(true)
     }
 
-    var state = State.NOTHING
+    var state = State.FIRST
 
     override var done: Boolean = false
 
-    override fun init(manager: CommandManager) {
-        super.init(manager)
-        assertEquals(State.NOTHING, state, "init() should be called first, not after ${state}")
-        state = State.INIT
-    }
-
     override fun start(frame: Frame) {
         super.start(frame)
-        assertEquals(State.INIT, state, "start() should be called after init(), not ${state}")
+        assertEquals(State.FIRST, state, "start() should be called first, not after ${state}")
         state = State.START
 
         prereqs.map { registerPrerequisite(it) }
