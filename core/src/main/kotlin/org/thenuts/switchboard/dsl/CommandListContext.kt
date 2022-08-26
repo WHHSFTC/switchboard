@@ -1,6 +1,10 @@
 package org.thenuts.switchboard.dsl
 
 import org.thenuts.switchboard.command.*
+import org.thenuts.switchboard.command.atomic.AwaitCommand
+import org.thenuts.switchboard.command.atomic.DelayCommand
+import org.thenuts.switchboard.command.atomic.SimpleCommand
+import org.thenuts.switchboard.command.combinator.*
 import org.thenuts.switchboard.util.Frame
 import kotlin.time.Duration
 
@@ -16,11 +20,11 @@ class CommandListContext {
     }
 
     fun awaitAll(vararg predicate: (Frame) -> Boolean) {
-        list += ConcurrentCommand(predicate.asList().map {AwaitCommand(it)}, awaitAll = true)
+        list += ConcurrentCommand(predicate.asList().map { AwaitCommand(it) }, awaitAll = true)
     }
 
     fun awaitAny(vararg predicate: (Frame) -> Boolean) {
-        list += ConcurrentCommand(predicate.asList().map {AwaitCommand(it)}, awaitAll = false)
+        list += ConcurrentCommand(predicate.asList().map { AwaitCommand(it) }, awaitAll = false)
     }
 
     fun awaitUntil(timeout: Duration, predicate: (Frame) -> Boolean) {

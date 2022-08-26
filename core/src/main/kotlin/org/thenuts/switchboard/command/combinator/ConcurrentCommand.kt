@@ -1,5 +1,6 @@
-package org.thenuts.switchboard.command
+package org.thenuts.switchboard.command.combinator
 
+import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
 class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) : Combinator() {

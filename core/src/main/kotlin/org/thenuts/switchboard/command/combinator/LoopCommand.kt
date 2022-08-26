@@ -1,5 +1,6 @@
-package org.thenuts.switchboard.command
+package org.thenuts.switchboard.command.combinator
 
+import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
 // TODO refactor command interface to reuse commands without real time generation

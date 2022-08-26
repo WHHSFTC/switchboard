@@ -1,5 +1,7 @@
-package org.thenuts.switchboard.command
+package org.thenuts.switchboard.command.combinator
 
+import org.thenuts.switchboard.command.Command
+import org.thenuts.switchboard.command.CommandManager
 import org.thenuts.switchboard.util.Frame
 
 data class SmartContext(

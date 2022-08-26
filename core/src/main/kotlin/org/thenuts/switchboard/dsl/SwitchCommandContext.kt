@@ -1,6 +1,7 @@
 package org.thenuts.switchboard.dsl
 
 import org.thenuts.switchboard.command.*
+import org.thenuts.switchboard.command.combinator.*
 
 class SwitchCommandContext<T> {
     private val list: MutableList<SwitchCommand.Case<T>> = mutableListOf()

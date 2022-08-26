@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.thenuts.switchboard.util.Frame
 import org.thenuts.switchboard.util.sinceJvmTime
+import org.thenuts.switchboard.command.combinator.ConcurrentCommand
 import kotlin.time.Duration
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

@@ -1,5 +1,6 @@
-package org.thenuts.switchboard.command
+package org.thenuts.switchboard.command.atomic
 
+import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
 /**
