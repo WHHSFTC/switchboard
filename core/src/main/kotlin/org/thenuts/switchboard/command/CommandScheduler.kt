@@ -2,7 +2,7 @@ package org.thenuts.switchboard.command
 
 import org.thenuts.switchboard.util.Frame
 
-class CommandScheduler : CommandManager {
+class CommandScheduler {
     private var _nodes = mutableListOf<Node>()
     val nodes: List<Node>
         get() = _nodes
@@ -64,22 +64,22 @@ class CommandScheduler : CommandManager {
 
 
     // CommandManager methods
-    override fun handleRegisterEdge(owner: Command, before: Command, after: Command) {
-        edgeInsertions.add(Edge(mutableSetOf(owner), before.node() ?: return, after.node() ?: return))
-    }
-
-    override fun handleDeregisterEdge(owner: Command, before: Command, after: Command) {
-        edgeRemovals.add(Edge(mutableSetOf(owner), before.node() ?: return, after.node() ?: return))
-    }
-
-    override fun handleDeregisterAll(owner: Command) {
-        edges.mapNotNullTo(edgeRemovals) { (o, b, a) ->
-            if (owner in o)
-                Edge(mutableSetOf(owner), b, a)
-            else
-                null
-        }
-    }
+//    override fun handleRegisterEdge(owner: Command, before: Command, after: Command) {
+//        edgeInsertions.add(Edge(mutableSetOf(owner), before.node() ?: return, after.node() ?: return))
+//    }
+//
+//    override fun handleDeregisterEdge(owner: Command, before: Command, after: Command) {
+//        edgeRemovals.add(Edge(mutableSetOf(owner), before.node() ?: return, after.node() ?: return))
+//    }
+//
+//    override fun handleDeregisterAll(owner: Command) {
+//        edges.mapNotNullTo(edgeRemovals) { (o, b, a) ->
+//            if (owner in o)
+//                Edge(mutableSetOf(owner), b, a)
+//            else
+//                null
+//        }
+//    }
 
     fun update(frame: Frame) {
         removeEdges()

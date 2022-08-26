@@ -1,12 +1,9 @@
 package org.thenuts.switchboard.command.combinator
 
 import org.thenuts.switchboard.command.Command
-import org.thenuts.switchboard.command.CommandManager
 import org.thenuts.switchboard.util.Frame
 
-data class SmartContext(
-    val manager: CommandManager
-)
+class SmartContext
 
 class SmartCombinator(val supplier: SmartContext.() -> Command) : Combinator() {
     var cmd: Command? = null
@@ -15,7 +12,7 @@ class SmartCombinator(val supplier: SmartContext.() -> Command) : Combinator() {
 
     override fun start(frame: Frame) {
         done = false
-        val ctx = SmartContext(manager = this)
+        val ctx = SmartContext()
         cmd = with(ctx) { supplier() }
 
         cmd!!.start(frame)

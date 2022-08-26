@@ -12,7 +12,6 @@ import kotlin.time.Duration
 class ConcurrentCommandTest {
     @Test
     fun interruptTest() {
-        val manager = MockManager()
         val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
@@ -32,7 +31,6 @@ class ConcurrentCommandTest {
 
     @Test
     fun awaitAllTest() {
-        val manager = MockManager()
         val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)), awaitAll = true)
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
@@ -51,7 +49,6 @@ class ConcurrentCommandTest {
 
     @Test
     fun raceTest() {
-        val manager = MockManager()
         val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(3), MockCommand(4)), awaitAll = false)
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)

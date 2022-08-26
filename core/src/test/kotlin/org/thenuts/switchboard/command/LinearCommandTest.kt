@@ -12,7 +12,6 @@ import kotlin.time.Duration
 class LinearCommandTest {
     @Test
     fun interruptTest() {
-        val manager = MockManager()
         val linear = LinearCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)

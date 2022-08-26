@@ -12,8 +12,6 @@ import kotlin.time.Duration
 class SwitchCommandTest {
     @Test
     fun lifecycleTest() {
-        val manager = MockManager()
-
         fun nTest(n: Int) {
             val switch = SwitchCommand({ n }, listOf(
                 SwitchCommand.Case({ it < 1 }, MockCommand(4)),
