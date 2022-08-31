@@ -1,6 +1,7 @@
 package org.thenuts.switchboard.command.combinator
 
 import org.thenuts.switchboard.command.Command
+import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
 class StrictCommand(val cmd: Command) : Combinator() {
@@ -21,6 +22,15 @@ class StrictCommand(val cmd: Command) : Combinator() {
             doneCheckAllowed = false
             return cmd.done
         }
+
+    override val dependencies: Map<Any, ResourceHandler<*>>
+        get() = cmd.dependencies
+
+    override val postreqs: List<Pair<Command, Int>>
+        get() = cmd.postreqs
+
+    override val prereqs: List<Pair<Command, Int>>
+        get() = cmd.prereqs
 
     override fun start(frame: Frame) {
         assert(state == State.PRE_START) { "start must be called first" }
