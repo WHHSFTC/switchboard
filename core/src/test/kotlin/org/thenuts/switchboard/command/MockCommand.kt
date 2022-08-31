@@ -1,7 +1,6 @@
 package org.thenuts.switchboard.command
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.thenuts.switchboard.util.Frame
 
 class MockCommand(
@@ -28,10 +27,11 @@ class MockCommand(
 
     override fun update(frame: Frame) {
         super.update(frame)
+        assertFalse(done)
         assertTrue(state == State.START || state == State.UPDATE, "update() should be called after start() or update(), not ${state}")
         state = State.UPDATE
 
-        n--;
+        n--
         if (n == 0) {
             done = true;
         }
