@@ -1,5 +1,6 @@
 package org.thenuts.switchboard.command
 
+import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
 /**
@@ -39,6 +40,25 @@ interface Command {
      * To be accessed after every call to [start] or [update].
      */
     val done: Boolean
+
+    /**
+     * List of stores requested by the command
+     * To be accessed before every call to [start] or [update].
+     */
+    val dependencies: Map<Any, ResourceHandler<*>>
+        get() = mapOf()
+
+    /**
+     * List of commands that should be run before this command, with their respective edge weights.
+     */
+    val prereqs: List<Pair<Command, Int>>
+        get() = listOf()
+
+    /**
+     * List of commands that should be run after this command, with their respective edge weights.
+     */
+    val postreqs: List<Pair<Command, Int>>
+        get() = listOf()
 
     /**
      * Does nothing and finishes immediately.

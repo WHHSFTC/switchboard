@@ -17,7 +17,7 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
     override fun update(frame: Frame) {
         if ((interrupt || cmd == null) && pred(frame)) {
             cmd?.let {
-                close(it)
+                it.cleanup()
             }
             cmd = null
             done = true
@@ -31,14 +31,14 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
         c.update(frame)
 
         if (c.done) {
-            close(c)
+            c.cleanup()
             cmd = null
         }
     }
 
     override fun cleanup() {
         cmd?.let {
-            close(it)
+            it.cleanup()
         }
     }
 }

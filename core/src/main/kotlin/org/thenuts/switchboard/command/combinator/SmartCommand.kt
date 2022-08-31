@@ -25,7 +25,7 @@ class SmartCombinator(val supplier: SmartContext.() -> Command) : Combinator() {
     }
 
     override fun cleanup() {
-        close(cmd!!)
+        cmd!!.cleanup()
         cmd = null
     }
 }

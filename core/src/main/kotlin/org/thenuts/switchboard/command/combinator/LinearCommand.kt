@@ -1,12 +1,16 @@
 package org.thenuts.switchboard.command.combinator
 
 import org.thenuts.switchboard.command.Command
+import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
 class LinearCommand(val list: List<Command>) : Combinator() {
     private var i = 0
 
     override var done: Boolean = false
+        private set
+
+    override var dependencies: Map<Any, ResourceHandler<*>> = mapOf()
         private set
 
     override fun start(frame: Frame) {
@@ -19,7 +23,7 @@ class LinearCommand(val list: List<Command>) : Combinator() {
 
         if (!list[i].done) return
 
-        close(list[i])
+        list[i].cleanup()
         i++
 
         startUntilNotDone(frame)
@@ -27,7 +31,7 @@ class LinearCommand(val list: List<Command>) : Combinator() {
 
     override fun cleanup() {
         if (i < list.size) {
-            close(list[i])
+            list[i].cleanup()
         }
     }
 
@@ -38,12 +42,13 @@ class LinearCommand(val list: List<Command>) : Combinator() {
                 return
             }
 
-            setup(list[i], frame)
+            list[i].start(frame)
+            dependencies = list[i].dependencies
 
             if (!list[i].done)
                 return
 
-            close(list[i])
+            list[i].cleanup()
             i++
         }
     }

@@ -20,12 +20,16 @@ class CommandSchedulerTest {
             sched.update(frame)
         }
 
-        assertArrayEquals(correctOrder.toTypedArray(), sched.nodes.filterIsInstance<CommandScheduler.Node.CommandNode>().map { it.cmd }.toTypedArray())
+        assertArrayEquals(
+            correctOrder.toTypedArray(),
+            sched.nodes.filterIsInstance<CommandScheduler.CommandNode>().map { it.runner.cmd }
+                .toTypedArray()
+        )
 
         sched.clear()
 
         assertArrayEquals(sched.nodes.map { true }.toTypedArray(), sched.nodes.map {
-            (it as? CommandScheduler.Node.CommandNode)?.let { (it.cmd as MockCommand).state.isSafe } ?: true
+            (it as? CommandScheduler.CommandNode)?.let { (it.runner.cmd as MockCommand).state.isSafe } ?: true
         }.toTypedArray())
 
         return sched
@@ -34,8 +38,8 @@ class CommandSchedulerTest {
     @Test
     fun orderTest() {
         val a = MockCommand(8)
-        val b = MockCommand(8, prereqs = listOf(a))
-        val c = MockCommand(8, prereqs = listOf(a), postreqs = listOf(b))
+        val b = MockCommand(8, prereqs = listOf(a to 1))
+        val c = MockCommand(8, prereqs = listOf(a to 1), postreqs = listOf(b to 1))
 
         runTest(listOf(a, b, c), listOf(a, c, b))
     }
@@ -43,8 +47,8 @@ class CommandSchedulerTest {
     @Test
     fun cycleTest() {
         val a = MockCommand(8)
-        val b = MockCommand(8, prereqs = listOf(a))
-        val c = MockCommand(8, prereqs = listOf(b), postreqs = listOf(a))
+        val b = MockCommand(8, prereqs = listOf(a to 1))
+        val c = MockCommand(8, prereqs = listOf(b to 1), postreqs = listOf(a to 2))
 
         runTest(listOf(a, b, c), listOf(a, b, c))
     }

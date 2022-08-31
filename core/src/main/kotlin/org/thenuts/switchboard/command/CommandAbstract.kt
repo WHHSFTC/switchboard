@@ -1,25 +1,32 @@
 package org.thenuts.switchboard.command
 
+import org.thenuts.switchboard.command.store.ResourceHandler
+
 abstract class CommandAbstract : Command {
-//    protected lateinit var commandManager: CommandManager
+    private var _postreqs: MutableList<Pair<Command, Int>> = mutableListOf()
 
-    fun registerPrerequisite(prereq: Command) {
-//        commandManager.handleRegisterEdge(this, prereq, this)
+    override val postreqs: List<Pair<Command, Int>>
+        get() = _postreqs
+
+    private var _prereqs: MutableList<Pair<Command, Int>> = mutableListOf()
+
+    override val prereqs: List<Pair<Command, Int>>
+        get() = _prereqs
+
+    private var _dependencies: MutableMap<Any, ResourceHandler<*>> = mutableMapOf()
+
+    override val dependencies: Map<Any, ResourceHandler<*>>
+        get() = _dependencies
+
+    protected fun declarePrereq(cmd: Command, priority: Int) {
+        _prereqs += cmd to priority
     }
 
-    fun registerPostrequisite(postreq: Command) {
-//        commandManager.handleRegisterEdge(this, this, postreq)
-    }
-    
-    fun deregisterPrerequisite(prereq: Command) {
-//        commandManager.handleDeregisterEdge(this, prereq, this)
+    protected fun declarePostreq(cmd: Command, priority: Int) {
+        _postreqs += cmd to priority
     }
 
-    fun deregisterPostrequisite(postreq: Command) {
-//        commandManager.handleDeregisterEdge(this, this, postreq)
-    }
-
-    fun deregisterAll() {
-//        commandManager.handleDeregisterAll(this)
+    protected fun declareDependency(key: Any, resourceHandler: ResourceHandler<*>) {
+        _dependencies[key] = resourceHandler
     }
 }
