@@ -3,6 +3,7 @@ package org.thenuts.switchboard.command
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 import org.thenuts.switchboard.util.sinceJvmTime
 import kotlin.time.Duration
@@ -51,5 +52,13 @@ class CommandSchedulerTest {
         val c = MockCommand(8, prereqs = listOf(b to 1), postreqs = listOf(a to 2))
 
         runTest(listOf(a, b, c), listOf(a, b, c))
+    }
+
+    @Test
+    fun resourceTest() {
+        val a = MockCommand(8, dependencies = mapOf("x" to ResourceHandler.Readable<Int>(100)))
+        val b = MockCommand(8, dependencies = mapOf("x" to ResourceHandler.Writeable<Int>(100)))
+
+        runTest(listOf(a, b), listOf(b, a))
     }
 }

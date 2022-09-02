@@ -1,12 +1,14 @@
 package org.thenuts.switchboard.command
 
 import org.junit.jupiter.api.Assertions.*
+import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
 class MockCommand(
     var n: Int,
     override val prereqs: List<Pair<Command, Int>> = listOf(),
     override val postreqs: List<Pair<Command, Int>> = listOf(),
+    override val dependencies: Map<Any, ResourceHandler<*>> = mapOf()
 ) : Command {
     enum class State(val isSafe: Boolean = false) {
         FIRST(true),
