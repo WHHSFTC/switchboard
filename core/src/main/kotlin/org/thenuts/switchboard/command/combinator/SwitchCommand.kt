@@ -13,10 +13,12 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combin
             if (c.pred(v)) {
                 cmd = c.command
                 cmd.start(frame)
+                done = cmd.done
                 return
             }
         }
         cmd = Command.NOP
+        done = cmd.done
     }
 
     override fun update(frame: Frame) {

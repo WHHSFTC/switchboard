@@ -17,17 +17,10 @@ class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) :
     }
 
     override fun update(frame: Frame) {
-        mut.forEach { it.update(frame) }
-
-        removeDone()
-
-        if (mut.isEmpty() || (!awaitAll && mut.size != list.size)) {
-            mut.forEach {
-                it.cleanup()
-            }
-            mut.clear()
-            done = true
+        mut.forEach {
+            it.update(frame)
         }
+        removeDone()
     }
 
     override fun cleanup() {
@@ -44,6 +37,14 @@ class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) :
             } else {
                 false
             }
+        }
+
+        if (mut.isEmpty() || (!awaitAll && mut.size != list.size)) {
+            mut.forEach {
+                it.cleanup()
+            }
+            mut.clear()
+            done = true
         }
     }
 }
