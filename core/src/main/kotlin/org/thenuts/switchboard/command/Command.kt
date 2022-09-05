@@ -11,7 +11,8 @@ import org.thenuts.switchboard.util.Frame
  * 2. [update] zero or more times
  * 3. [cleanup] once
  *
- * Before each call of [update], the command must be cleaned up if [done] is true.
+ * After each call to [start] or [update], the command must be cleaned up if [done] is true.
+ * [update] can never be called after [done] is true.
  *
  * None of these functions should contain hardware calls or other long operations (would take less
  * time on the OpMode thread to spawn a new thread for any computation than to compute it directly).
