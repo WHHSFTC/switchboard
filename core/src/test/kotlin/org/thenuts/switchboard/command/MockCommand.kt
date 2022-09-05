@@ -35,7 +35,7 @@ class MockCommand(
 
         n--
         if (n == 0) {
-            done = true;
+            done = true
         }
     }
 
