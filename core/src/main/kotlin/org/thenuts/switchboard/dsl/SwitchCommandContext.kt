@@ -10,7 +10,7 @@ class SwitchCommandContext<T>(val strict: Boolean) {
      * Creates a branch that will match if `predicate(supplier())` is `true`.
      */
     fun satisfies(predicate: (T) -> Boolean, block: CommandListContext.() -> Unit) {
-        list += SwitchCommand.Case<T>(predicate, mkLinear(strict, block))
+        list += SwitchCommand.Case<T>(predicate, mkSequential(strict, block))
     }
 
     /**

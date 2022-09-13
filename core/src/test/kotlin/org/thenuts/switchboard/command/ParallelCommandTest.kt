@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.thenuts.switchboard.util.Frame
 import org.thenuts.switchboard.util.sinceJvmTime
-import org.thenuts.switchboard.command.combinator.ConcurrentCommand
+import org.thenuts.switchboard.command.combinator.ParallelCommand
 import kotlin.time.Duration
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ConcurrentCommandTest {
+class ParallelCommandTest {
     @Test
     fun interruptTest() {
-        val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
+        val concurrent = ParallelCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)))
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
@@ -31,7 +31,7 @@ class ConcurrentCommandTest {
 
     @Test
     fun awaitAllTest() {
-        val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)), awaitAll = true)
+        val concurrent = ParallelCommand(listOf(MockCommand(4), MockCommand(4), MockCommand(4)), awaitAll = true)
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)
@@ -49,7 +49,7 @@ class ConcurrentCommandTest {
 
     @Test
     fun raceTest() {
-        val concurrent = ConcurrentCommand(listOf(MockCommand(4), MockCommand(3), MockCommand(4)), awaitAll = false)
+        val concurrent = ParallelCommand(listOf(MockCommand(4), MockCommand(3), MockCommand(4)), awaitAll = false)
 
         var frame = Frame(0, Duration.sinceJvmTime(), Duration.ZERO)
         concurrent.start(frame)

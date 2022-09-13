@@ -7,7 +7,7 @@ import org.thenuts.switchboard.util.Frame
 class SlotCommand(
     override val prereqs: List<Pair<Command, Int>>,
     override val postreqs: List<Pair<Command, Int>>,
-) : Combinator() {
+) : Command {
     override val done: Boolean = false
 
     private var runner: CommandRunner? = null

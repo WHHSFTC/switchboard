@@ -4,7 +4,7 @@ import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
-class StrictCommand(val cmd: Command) : Combinator() {
+class StrictCommand(val cmd: Command) : Command {
     private var doneCheckAllowed = false
 
     enum class State(val stable: Boolean = false) {

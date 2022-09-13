@@ -3,7 +3,7 @@ package org.thenuts.switchboard.command.combinator
 import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
-class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combinator() {
+class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Command {
     override var done: Boolean = false
     private lateinit var cmd: Command
 

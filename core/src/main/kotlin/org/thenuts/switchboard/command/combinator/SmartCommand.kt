@@ -5,7 +5,7 @@ import org.thenuts.switchboard.util.Frame
 
 class SmartContext
 
-class SmartCombinator(val supplier: SmartContext.() -> Command) : Combinator() {
+class SmartCombinator(val supplier: SmartContext.() -> Command) : Command {
     var cmd: Command? = null
     override var done: Boolean = false
         private set

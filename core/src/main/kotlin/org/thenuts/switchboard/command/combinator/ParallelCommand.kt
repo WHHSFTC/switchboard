@@ -3,7 +3,7 @@ package org.thenuts.switchboard.command.combinator
 import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
-class ConcurrentCommand(val list: List<Command>, val awaitAll: Boolean = true) : Combinator() {
+class ParallelCommand(val list: List<Command>, val awaitAll: Boolean = true) : Command {
     val mut: MutableList<Command> = list.toMutableList()
 
     override var done: Boolean = false

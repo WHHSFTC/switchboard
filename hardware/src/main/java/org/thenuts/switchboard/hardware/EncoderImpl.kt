@@ -3,7 +3,6 @@ package org.thenuts.switchboard.hardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.thenuts.switchboard.core.Logger
-import org.thenuts.switchboard.util.EPSILON
 import org.thenuts.switchboard.util.epsilonEquals
 import org.thenuts.switchboard.util.sinceJvmTime
 import kotlin.time.Duration
