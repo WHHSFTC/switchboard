@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="switchboard.svg"
+   inkscape:export-xdpi="219.42857"
+   inkscape:export-ydpi="219.42857"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="96px"
+     scale-x="1"
+     inkscape:zoom="2.1362516"
+     inkscape:cx="109.06955"
+     inkscape:cy="102.28196"
+     inkscape:window-width="1916"
+     inkscape:window-height="1040"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Traces" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g523" />
+    <g
+       id="g1748"
+       transform="translate(0,24)"
+       inkscape:export-filename="/home/luke/switchboard.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <path
+         style="fill:none;stroke:#c9a923;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 32,80 h 72 l 48,48 h 72"
+         id="path1259" />
+      <path
+         style="fill:none;stroke:#c9a923;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 32,128 h 72 l 48,-48 h 72"
+         id="path1261" />
+      <path
+         style="fill:none;stroke:#c9a923;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 32,32 H 224"
+         id="path1522" />
+      <path
+         style="fill:none;stroke:#c9a923;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 32,176 H 224"
+         id="path1623" />
+      <circle
+         style="fill:#1f3864;fill-opacity:1"
+         id="path428"
+         cx="32"
+         cy="32"
+         r="16" />
+      <circle
+         style="fill:#1f3864;fill-opacity:1"
+         id="circle510"
+         cx="32"
+         cy="80"
+         r="16" />
+      <circle
+         style="fill:#1f3864;fill-opacity:1"
+         id="circle512"
+         cx="32"
+         cy="128"
+         r="16" />
+      <circle
+         style="fill:#1f3864;fill-opacity:1"
+         id="circle516"
+         cx="32"
+         cy="176"
+         r="16" />
+      <g
+         id="g2430"
+         transform="translate(192)">
+        <circle
+           style="fill:#1f3864;fill-opacity:1"
+           id="circle2420"
+           cx="32"
+           cy="32"
+           r="16" />
+        <circle
+           style="fill:#1f3864;fill-opacity:1"
+           id="circle2422"
+           cx="32"
+           cy="80"
+           r="16" />
+        <circle
+           style="fill:#1f3864;fill-opacity:1"
+           id="circle2424"
+           cx="32"
+           cy="128"
+           r="16" />
+        <circle
+           style="fill:#1f3864;fill-opacity:1"
+           id="circle2428"
+           cx="32"
+           cy="176"
+           r="16" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#1f3864;fill-opacity:1;stroke:none"
+       x="49.845703"
+       y="93.506104"
+       id="text3678"><tspan
+         sodipodi:role="line"
+         id="tspan3676"
+         x="49.845703"
+         y="93.506104">SWITCH</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#1f3864;fill-opacity:1;stroke:none"
+       x="56.193359"
+       y="189.51425"
+       id="text8872"><tspan
+         sodipodi:role="line"
+         id="tspan8870"
+         x="56.193359"
+         y="189.51425">BOARD</tspan></text>
+  </g>
+</svg>
