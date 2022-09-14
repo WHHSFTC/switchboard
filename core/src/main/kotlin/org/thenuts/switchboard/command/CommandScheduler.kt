@@ -74,10 +74,12 @@ class CommandScheduler(val strict: Boolean = false) {
 
         _nodes = DirectedAcyclicGraph.topSort(_nodes, edges, strict).toMutableList()
 
-        _nodes.forEach { node ->
-            if (node is CommandNode) {
-                if (node.runner.step(frame))
-                    removals += node
+        _nodes.removeAll { node ->
+            if (node is CommandNode && node.runner.step(frame)) {
+                cleanupNode(node)
+                true
+            } else {
+                false
             }
         }
     }
