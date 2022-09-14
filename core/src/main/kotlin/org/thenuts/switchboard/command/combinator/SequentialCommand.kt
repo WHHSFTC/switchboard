@@ -7,14 +7,15 @@ import org.thenuts.switchboard.util.Frame
 /**
  * Executes all of the Commands in [list] sequentially.
  */
-class SequentialCommand(val list: List<Command>) : Command {
+class SequentialCommand(val list: List<Command>) : Combinator() {
     private var i = 0
 
     override var done: Boolean = false
         private set
 
-    override var dependencies: Map<Any, ResourceHandler<*>> = mapOf()
-        private set
+    init {
+        subCommands = list
+    }
 
     override fun start(frame: Frame) {
         startUntilNotDone(frame)
@@ -46,7 +47,6 @@ class SequentialCommand(val list: List<Command>) : Command {
             }
 
             list[i].start(frame)
-            dependencies = list[i].dependencies
 
             if (!list[i].done)
                 return

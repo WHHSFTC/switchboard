@@ -1,6 +1,7 @@
 package org.thenuts.switchboard.command
 
 import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -65,13 +66,5 @@ class CommandSchedulerTest {
         assertThrows<GraphException> {
             runTest(listOf(a, b, c), listOf(), strict = true)
         }
-    }
-
-    @Test
-    fun resourceTest() {
-        val a = MockCommand(8, dependencies = mapOf("x" to ResourceHandler.Readable<Int>(100)))
-        val b = MockCommand(8, dependencies = mapOf("x" to ResourceHandler.Writeable<Int>(100)))
-
-        runTest(listOf(a, b), listOf(b, a))
     }
 }

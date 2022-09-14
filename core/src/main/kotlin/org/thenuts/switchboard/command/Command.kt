@@ -43,13 +43,6 @@ interface Command {
     val done: Boolean
 
     /**
-     * List of stores requested by the command
-     * To be accessed before every call to [start] or [update].
-     */
-    val dependencies: Map<Any, ResourceHandler<*>>
-        get() = mapOf()
-
-    /**
      * List of commands that should be run before this command, with their respective edge weights.
      */
     val prereqs: List<Pair<Command, Int>>

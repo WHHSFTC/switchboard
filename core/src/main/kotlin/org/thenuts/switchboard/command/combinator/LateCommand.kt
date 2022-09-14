@@ -6,7 +6,7 @@ import org.thenuts.switchboard.util.Frame
 /**
  * Uses [supplier] to generate a new Command on start, then executes it.
  */
-class LateCommand(val supplier: () -> Command) : Command {
+class LateCommand(val supplier: () -> Command) : Combinator() {
     var cmd: Command? = null
     override var done: Boolean = false
         private set
@@ -14,6 +14,8 @@ class LateCommand(val supplier: () -> Command) : Command {
     override fun start(frame: Frame) {
         done = false
         cmd = supplier()
+
+        subCommands = listOf(cmd!!)
 
         cmd!!.start(frame)
         done = cmd!!.done

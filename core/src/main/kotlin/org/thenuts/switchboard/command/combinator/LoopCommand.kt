@@ -8,13 +8,14 @@ import org.thenuts.switchboard.util.Frame
  *
  * @param interrupt Whether to query [pred] at every update, rather than just for each new Command.
  */
-class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, val commandBuilder: () -> Command) : Command {
+class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, val commandBuilder: () -> Command) : Combinator() {
     private var cmd: Command? = null
     override var done: Boolean = false
 
     override fun start(frame: Frame) {
         cmd = commandBuilder().also {
             it.start(frame)
+            subCommands = listOf(it)
         }
     }
 

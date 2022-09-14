@@ -7,7 +7,11 @@ import org.thenuts.switchboard.util.Frame
 /**
  * Wraps a Command and makes assertions about the order of method calls.
  */
-class StrictCommand(val cmd: Command) : Command {
+class StrictCommand(val cmd: Command) : Combinator() {
+    init {
+        subCommands = listOf(cmd)
+    }
+
     private var doneCheckAllowed = false
 
     enum class State(val stable: Boolean = false) {
@@ -25,15 +29,6 @@ class StrictCommand(val cmd: Command) : Command {
             doneCheckAllowed = false
             return cmd.done
         }
-
-    override val dependencies: Map<Any, ResourceHandler<*>>
-        get() = cmd.dependencies
-
-    override val postreqs: List<Pair<Command, Int>>
-        get() = cmd.postreqs
-
-    override val prereqs: List<Pair<Command, Int>>
-        get() = cmd.prereqs
 
     override fun start(frame: Frame) {
         assert(state == State.PRE_START) { "start must be called first" }

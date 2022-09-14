@@ -7,8 +7,7 @@ import org.thenuts.switchboard.util.Frame
 class MockCommand(
     var n: Int,
     override val prereqs: List<Pair<Command, Int>> = listOf(),
-    override val postreqs: List<Pair<Command, Int>> = listOf(),
-    override val dependencies: Map<Any, ResourceHandler<*>> = mapOf()
+    override val postreqs: List<Pair<Command, Int>> = listOf()
 ) : Command {
     enum class State(val isSafe: Boolean = false) {
         FIRST(true),

@@ -9,8 +9,12 @@ import org.thenuts.switchboard.util.Frame
  * @param awaitAll If true, finishes when all subcommands are done. Otherwise, finishes when the
  * first finishes.
  */
-class ParallelCommand(val list: List<Command>, val awaitAll: Boolean = true) : Command {
+class ParallelCommand(val list: List<Command>, val awaitAll: Boolean = true) : Combinator() {
     val mut: MutableList<Command> = list.toMutableList()
+
+    init {
+        subCommands = list
+    }
 
     override var done: Boolean = false
         private set

@@ -7,7 +7,7 @@ import org.thenuts.switchboard.util.Frame
  * Calls [supplier] on start, and uses the result to select a [Case] to run. If none match,
  * [Command.NOP] is called.
  */
-class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Command {
+class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Combinator() {
     override var done: Boolean = false
     private lateinit var cmd: Command
 
@@ -22,6 +22,7 @@ class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Comman
             }
         }
         cmd = Command.NOP
+        subCommands = listOf(cmd)
         done = cmd.done
     }
 
