@@ -4,6 +4,9 @@ import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
+/**
+ * Executes all of the Commands in [list] sequentially.
+ */
 class SequentialCommand(val list: List<Command>) : Command {
     private var i = 0
 

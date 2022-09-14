@@ -3,6 +3,10 @@ package org.thenuts.switchboard.command.combinator
 import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
+/**
+ * Calls [supplier] on start, and uses the result to select a [Case] to run. If none match,
+ * [Command.NOP] is called.
+ */
 class SwitchCommand<T>(val supplier: () -> T, val cases: List<Case<T>>) : Command {
     override var done: Boolean = false
     private lateinit var cmd: Command

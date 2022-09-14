@@ -3,7 +3,11 @@ package org.thenuts.switchboard.command.combinator
 import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
-// TODO refactor command interface to reuse commands without real time generation
+/**
+ * As long as [pred] returns true, Commands returned by [commandBuilder] are executed one at a time.
+ *
+ * @param interrupt Whether to query [pred] at every update, rather than just for each new Command.
+ */
 class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, val commandBuilder: () -> Command) : Command {
     private var cmd: Command? = null
     override var done: Boolean = false
@@ -16,9 +20,7 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
 
     override fun update(frame: Frame) {
         if ((interrupt || cmd == null) && pred(frame)) {
-            cmd?.let {
-                it.cleanup()
-            }
+            cmd?.cleanup()
             cmd = null
             done = true
             return
@@ -37,8 +39,6 @@ class LoopCommand(val pred: (Frame) -> Boolean, val interrupt: Boolean = false, 
     }
 
     override fun cleanup() {
-        cmd?.let {
-            it.cleanup()
-        }
+        cmd?.cleanup()
     }
 }

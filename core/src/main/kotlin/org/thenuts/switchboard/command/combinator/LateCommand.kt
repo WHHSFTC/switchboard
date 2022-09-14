@@ -3,17 +3,17 @@ package org.thenuts.switchboard.command.combinator
 import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
-class SmartContext
-
-class SmartCombinator(val supplier: SmartContext.() -> Command) : Command {
+/**
+ * Uses [supplier] to generate a new Command on start, then executes it.
+ */
+class LateCommand(val supplier: () -> Command) : Command {
     var cmd: Command? = null
     override var done: Boolean = false
         private set
 
     override fun start(frame: Frame) {
         done = false
-        val ctx = SmartContext()
-        cmd = with(ctx) { supplier() }
+        cmd = supplier()
 
         cmd!!.start(frame)
         done = cmd!!.done

@@ -4,6 +4,9 @@ import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.command.store.ResourceHandler
 import org.thenuts.switchboard.util.Frame
 
+/**
+ * Wraps a Command and makes assertions about the order of method calls.
+ */
 class StrictCommand(val cmd: Command) : Command {
     private var doneCheckAllowed = false
 

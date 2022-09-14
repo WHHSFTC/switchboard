@@ -3,6 +3,12 @@ package org.thenuts.switchboard.command.combinator
 import org.thenuts.switchboard.command.Command
 import org.thenuts.switchboard.util.Frame
 
+/**
+ * Executes all of the Commands in [list] simultaneously.
+ *
+ * @param awaitAll If true, finishes when all subcommands are done. Otherwise, finishes when the
+ * first finishes.
+ */
 class ParallelCommand(val list: List<Command>, val awaitAll: Boolean = true) : Command {
     val mut: MutableList<Command> = list.toMutableList()
 
