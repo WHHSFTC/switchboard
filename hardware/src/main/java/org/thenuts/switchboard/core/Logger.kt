@@ -16,6 +16,12 @@ class Logger(
     val out = LogStream("out")
     val err = LogStream("err")
 
+    val receivers: MutableSet<LogReceiver> = mutableSetOf(LogReceiver.TelemetryReciever(telemetry))
+
+    fun addReceiver(receiver: LogReceiver) {
+        receivers += receiver
+    }
+
     // list of one-off messages to display
     val messages: MutableList<Pair<String, Duration>> = mutableListOf()
     fun addMessage(text: String, duration: Duration) {
@@ -34,9 +40,11 @@ class Logger(
 
 //        val t = if (DEBUG) multipleTelemetry else telemetry
 
-        out.print(telemetry)
-        if (DEBUG)
-            err.print(telemetry)
+        receivers.forEach {
+            it.print(out)
+            if (DEBUG)
+                it.print(err)
+        }
 
         telemetry.addLine("messages")
         telemetry.addLine("---")
@@ -47,15 +55,21 @@ class Logger(
 
     inner class LogStream(
             val name: String,
-            private val mutableMap: MutableMap<String, Any?> = mutableMapOf()
+            val mutableMap: MutableMap<String, Any?> = mutableMapOf()
     ): MutableMap<String, Any?> by mutableMap {
         val suppliers: MutableMap<String, () -> Any?> = mutableMapOf()
+    }
 
-        fun print(t: Telemetry) {
-            t.addLine(name)
-            t.addLine("---")
-            mutableMap.forEach { (k, v) -> t.addData(k, v) }
-            suppliers.forEach { (k, v) -> t.addData(k, v()) }
+    interface LogReceiver {
+        fun print(l: LogStream)
+
+        open class TelemetryReciever(val t: Telemetry) : LogReceiver {
+            override fun print(l: LogStream) {
+                t.addLine(l.name)
+                t.addLine("---")
+                l.mutableMap.forEach { (k, v) -> t.addData(k, v) }
+                l.suppliers.forEach { (k, v) -> t.addData(k, v()) }
+            }
         }
     }
 
