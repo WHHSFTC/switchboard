@@ -3,7 +3,7 @@ package org.thenuts.switchboard.scheduler
 import kotlin.time.Duration
 
 
-class AllScheduler(val list: List<HardwareScheduler>): HardwareScheduler {
+class AllScheduler(val list: List<HardwareCallable>): HardwareCallable {
     override fun getWorstMean(): Duration =
         list.fold(Duration.ZERO) { acc, sched -> acc + sched.getWorstMean() }
 

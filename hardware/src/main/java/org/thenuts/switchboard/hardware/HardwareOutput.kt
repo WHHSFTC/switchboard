@@ -1,5 +1,5 @@
 package org.thenuts.switchboard.hardware
 
-import org.thenuts.switchboard.scheduler.HardwareScheduler
+import org.thenuts.switchboard.scheduler.HardwareCallable
 
-interface HardwareOutput: HardwareScheduler
+interface HardwareOutput: HardwareCallable

@@ -1,9 +1,7 @@
 package org.thenuts.switchboard.dsl
 
 import org.thenuts.switchboard.command.*
-import org.thenuts.switchboard.command.atomic.AwaitCommand
-import org.thenuts.switchboard.command.atomic.DelayCommand
-import org.thenuts.switchboard.command.atomic.SimpleCommand
+import org.thenuts.switchboard.command.atomic.*
 import org.thenuts.switchboard.command.combinator.*
 import org.thenuts.switchboard.util.Frame
 import kotlin.time.Duration
@@ -69,6 +67,14 @@ class CommandListContext(val strict: Boolean = false) {
      */
     fun delay(duration: Duration): CommandListContext {
         add(DelayCommand(duration))
+        return this
+    }
+
+    /**
+     * Adds a [LinearCommand] that runs [block] asynchronously.
+     */
+    fun linear(finally: () -> Unit = { }, block: suspend LinearContext.() -> Unit): CommandListContext {
+        add(LinearCommand(block, finally))
         return this
     }
 
@@ -149,6 +155,15 @@ class CommandListContext(val strict: Boolean = false) {
 
     internal fun buildParallel(awaitAll: Boolean) = ParallelCommand(list, awaitAll)
 }
+
+/**
+ * Constructs a [LinearCommand] that will evaluate a [block] asynchronously.
+ *
+ * @param finally Callback to cleanup command.
+ * @param block Asynchronous function to evaluate.
+ */
+fun mkLinear(finally: () -> Unit = { }, block: suspend LinearContext.() -> Unit): Command
+    = LinearCommand(block, finally)
 
 /**
  * Constructs a [SequentialCommand] that will evaluate a list of commands from [block] one by one.
